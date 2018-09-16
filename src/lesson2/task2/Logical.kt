@@ -90,4 +90,5 @@ fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
             ((a * c <= r * s) && ((a <= r && c <= s) || (c <= r && a <= s))) ||
                     ((b * c <= r * s) && ((c <= r && b <= s) || (b <= r && c <= s)))) return true
     else return false
+    //
 }
