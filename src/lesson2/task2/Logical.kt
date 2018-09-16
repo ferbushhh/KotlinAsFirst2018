@@ -45,8 +45,8 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int {
-    if (month == 2 && (year % 400 == 0) || (year % 100 != 0 && year % 4 == 0)) return 29
-    return when {
+    if (month == 2 && ((year % 400 == 0) || (year % 100 != 0 && year % 4 == 0))) return 29
+    else return when {
         month == 1 -> 31
         month == 3 -> 31
         month == 4 -> 30
