@@ -152,20 +152,6 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
             max = c
         }
     }
-    /*when {
-        ((a >= b && a >= c) || (a == b || a == c)) -> {
-            max = a
-            sum = b * b + c * c
-        }
-        ((b >= a && b >= c) || (a == b || b == c)) -> {
-            max = b
-            sum = a * a + c * c
-        }
-        ((c >= a && c >= b) || (c == b || a == c)) -> {
-            sum = b * b + a * a
-            max = c
-        }
-    }*/
     return when {
         (a + c < b || a + b < c || c + b < a) -> -1
         (sum < max * max) -> 2
