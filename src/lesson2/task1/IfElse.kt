@@ -140,19 +140,33 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     var max = 0.0
     var sum = 0.0
     when {
-        ((a > b && a > c) || (a == b || a == c)) -> {
+        (a >= b && a >= c) -> {
             max = a
             sum = b * b + c * c
         }
-        ((b > a && b > c) || (a == b || b == c)) -> {
+        (b >= a && b >= c) -> {
             max = b
             sum = a * a + c * c
         }
-        ((c > a && c > b) || (c == b || a == c)) -> {
+        (c >= a && c >= b) -> {
             sum = b * b + a * a
             max = c
         }
     }
+    /*when {
+        ((a >= b && a >= c) || (a == b || a == c)) -> {
+            max = a
+            sum = b * b + c * c
+        }
+        ((b >= a && b >= c) || (a == b || b == c)) -> {
+            max = b
+            sum = a * a + c * c
+        }
+        ((c >= a && c >= b) || (c == b || a == c)) -> {
+            sum = b * b + a * a
+            max = c
+        }
+    }*/
     return when {
         (a + c < b || a + b < c || c + b < a) -> -1
         (sum < max * max) -> 2
@@ -177,5 +191,4 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
     d - a >= 0 && d - b <= 0 && c - a > 0 -> d - c
     a - c >= 0 && b - d <= 0 -> b - a
     else -> -1
-    //
 }
