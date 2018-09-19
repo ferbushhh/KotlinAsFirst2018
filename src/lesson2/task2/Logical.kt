@@ -21,8 +21,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
 fun isNumberHappy(number: Int): Boolean {
     val sum1 = (number % 10) + ((number / 10) % 10)
     val sum2 = ((number / 100) % 10) + ((number / 1000) % 10)
-    if (sum1 == sum2) return true
-    else return false
+    return sum1 == sum2
 }
 
 /**
@@ -44,23 +43,23 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int {
-    if (month == 2 && ((year % 400 == 0) || (year % 100 != 0 && year % 4 == 0))) return 29
-    else return when {
-        month == 1 -> 31
-        month == 3 -> 31
-        month == 4 -> 30
-        month == 5 -> 31
-        month == 6 -> 30
-        month == 7 -> 31
-        month == 8 -> 31
-        month == 9 -> 30
-        month == 10 -> 31
-        month == 11 -> 30
-        month == 12 -> 31
-        else -> return 28
-    }
+fun daysInMonth(month: Int, year: Int): Int = if (month == 2 && ((year % 400 == 0)
+                || (year % 100 != 0 && year % 4 == 0))) 29
+else when {
+    month == 1 -> 31
+    month == 3 -> 31
+    month == 4 -> 30
+    month == 5 -> 31
+    month == 6 -> 30
+    month == 7 -> 31
+    month == 8 -> 31
+    month == 9 -> 30
+    month == 10 -> 31
+    month == 11 -> 30
+    month == 12 -> 31
+    else -> 28
 }
+
 
 /**
  * Средняя
@@ -72,8 +71,7 @@ fun daysInMonth(month: Int, year: Int): Int {
 fun circleInside(x1: Double, y1: Double, r1: Double,
                  x2: Double, y2: Double, r2: Double): Boolean {
     val distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
-    if (r2 >= r1 + distance) return true
-    else return false
+    return r2 >= r1 + distance
 }
 
 /**
@@ -85,9 +83,6 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    if (((a * b <= r * s) && ((a <= r && b <= s) || (b <= r && a <= s))) ||
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = (((a * b <= r * s) && ((a <= r && b <= s) || (b <= r && a <= s))) ||
             ((a * c <= r * s) && ((a <= r && c <= s) || (c <= r && a <= s))) ||
-                    ((b * c <= r * s) && ((c <= r && b <= s) || (b <= r && c <= s)))) return true
-    else return false
-}
+                    ((b * c <= r * s) && ((c <= r && b <= s) || (b <= r && c <= s))))
