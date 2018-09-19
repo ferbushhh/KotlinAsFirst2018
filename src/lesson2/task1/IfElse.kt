@@ -67,6 +67,7 @@ fun ageDescription(age: Int): String = when {
     age in 11..20 || age in 111..114 -> "$age лет"
     age % 10 == 1 -> "$age год"
     age % 10 == 2 || age % 10 == 4 || age % 10 == 3 -> "$age года"
+    age % 10 in 2..4 -> "$age года"
     else -> "$age лет"
 }
 
@@ -84,7 +85,6 @@ fun timeForHalfWay(t1: Double, v1: Double,
     t1 * v1 + t2 * v2 >= (t1 * v1 + t2 * v2 + t3 * v3) / 2.0 ->
         t1 + (((t1 * v1 + t2 * v2 + t3 * v3) / 2.0 - t1 * v1) / v2)
     else -> (v3 * t3 - (t1 * v1 + t2 * v2 + t3 * v3) / 2.0) / v3 + t1 + t2
-
 }
 
 /**
