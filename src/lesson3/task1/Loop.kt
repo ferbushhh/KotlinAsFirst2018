@@ -70,7 +70,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var kol = 0
-    var num = n
+    var num = abs(n)
     if (num == 0) return 1
     while (num > 0) {
         num /= 10
@@ -86,8 +86,21 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    return if ((n == 1) || (n == 2)) 1
-    else (fib(n - 2) + (fib(n - 1)))
+    if (n == 1 || n == 2) return 1
+    else {
+        var num = 2
+        var fib = 1
+        var second = 1
+        while (true) {
+            if (num + 1 == n) return (fib + second)
+            else {
+                var aux = fib
+                fib = second
+                second += aux
+                num++
+            }
+        }
+    }
 }
 
 /**
@@ -142,13 +155,13 @@ fun maxDivisor(n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    var a = 2
-    if (m % n == 0 || n % m == 0) return false
-    else while (a < n || a < m) {
-        if (n % a == 0 && m % a == 0) return false
-        a++
+    var a = m
+    var b = n
+    while (a != b) {
+        if (a > b) a -= b
+        else b -= a
     }
-    return true
+    return (a == 1)
 }
 
 /**
@@ -158,9 +171,9 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean { //неправильно проходит последний тест
-    for (i in 1..n) {
-        if ((i * i <= n) && (i * i >= m)) return true
+fun squareBetweenExists(m: Int, n: Int): Boolean {
+    for (i in 0..(sqrt(n.toDouble())).toInt() + 1) {
+        if ((i <= sqrt(n.toDouble())) && (i >= sqrt(m.toDouble()))) return true
     }
     return false
 }
@@ -203,7 +216,7 @@ fun collatzSteps(x: Int): Int {
  * sin(x) = x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun sin(x: Double, eps: Double): Double = TODO() /*{ //не работает!!!
+fun sin(x: Double, eps: Double): Double { //не работает!!!
     var p = x
     var fac = 1
     var ans = x
@@ -217,7 +230,7 @@ fun sin(x: Double, eps: Double): Double = TODO() /*{ //не работает!!!
         fac += 2
     }
     return ans
-}*/
+}
 
 /**
  * Средняя
@@ -256,17 +269,8 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var num = n
-    var rev = 0
-    var ost: Int
-    while (num > 0) {
-        ost = num % 10
-        rev = rev * 10 + ost
-        num /= 10
-    }
-    return rev == n
-}
+fun isPalindrome(n: Int): Boolean = n == revert(n)
+
 
 /**
  * Средняя
@@ -333,28 +337,27 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int { //не проходит последний тест
-    var m = n
+    var num = n
     var i = 1
-    var k: Int
-    var p = 0
-    var y = 1
-    while (i >= 1) {
-        k = fib(i)
-        var t = k
-        while (t > 0) {
-            t /= 10
-            p++
+    var count = 0
+    var check = 1
+    while (true) {
+        var fib = fib(i)
+        var copy = fib
+        while (copy > 0) {
+            copy /= 10
+            count++
         }
-        if (p == m) return k % 10
-        else if (p > m) {
-            if ((p - y) == m) return ((k / 10) % 10)
+        if (count == num) return fib % 10
+        else if (count > num) {
+            if ((count - check) == num) return ((fib / 10) % 10)
             else {
-                k /= 10
-                y++
+                fib /= 10
+                check++
             }
         }
-        m -= p
-        p = 0
+        num -= count
+        count = 0
         i++
     }
     return 0
@@ -362,6 +365,6 @@ fun fibSequenceDigit(n: Int): Int { //не проходит последний �
 
 
 /*fun main(args: Array<String>) {
-    val x1x2 = squareBetweenExists(2147395601, Int.MAX_VALUE)
+    val x1x2 = fibSequenceDigit(128)
     println("Root product: $x1x2")
 }*/
