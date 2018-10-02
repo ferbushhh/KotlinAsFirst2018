@@ -112,8 +112,8 @@ fun fib(n: Int): Int {
         b = a
         a += c
     }
-    if (n != 1 || n != 2) return a
-    else return 1
+    return if (n != 1 || n != 2) a
+    else 1
 }
 
 /**
