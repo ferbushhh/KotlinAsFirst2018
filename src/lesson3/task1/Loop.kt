@@ -85,7 +85,7 @@ fun digitNumber(n: Int): Int {
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int {
+/*fun fib(n: Int): Int {
     if (n == 1 || n == 2) return 1
     else {
         var num = 2
@@ -102,6 +102,18 @@ fun fib(n: Int): Int {
             }
         }
     }
+}*/
+
+fun fib(n: Int): Int {
+    var a = 1
+    var b = 1
+    for (i in 3..n) {
+        var c = b
+        b = a
+        a += c
+    }
+    if (n != 1 || n != 2) return a
+    else return 1
 }
 
 /**
@@ -302,7 +314,25 @@ fun numberDigit(t: Int): Int {
     return count
 }
 
-fun squareSequenceDigit(n: Int): Int {
+fun control(a: Int, b: Int, c: Int): Int {
+    var p = a
+    var k = b
+    var m = c
+    var y = 1
+    if (p == m) return k % 10
+    else if (p > m) {
+        while (true) {
+            if ((p - y) == m) return ((k / 10) % 10)
+            else {
+                k /= 10
+                y++
+            }
+        }
+    }
+    return -1
+}
+
+/*fun squareSequenceDigit(n: Int): Int {
     var m = n
     var i = 1
     var k: Int
@@ -325,6 +355,20 @@ fun squareSequenceDigit(n: Int): Int {
         i++
     }
     return 0
+}*/
+fun squareSequenceDigit(n: Int): Int {
+    var num = n
+    var i = 1
+    var square: Int
+    while (i >= 1) {
+        square = i * i
+        var count = numberDigit(square)
+        var check = control(count, square, num)
+        if (check != -1) return check
+        num -= count
+        i++
+    }
+    return 0
 }
 
 /**
@@ -336,7 +380,7 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int { //не проходит последний тест
+/*fun fibSequenceDigit(n: Int): Int { //не проходит последний тест
     var num = n
     var i = 1
     var check = 1
@@ -357,10 +401,23 @@ fun fibSequenceDigit(n: Int): Int { //не проходит последний �
         i++
     }
     return 0
+} */
+
+fun fibSequenceDigit(n: Int): Int { //не проходит последний тест
+    var num = n
+    var i = 1
+    while (true) {
+        var fib = fib(i)
+        var count = numberDigit(fib)
+        var check = control(count, fib, num)
+        if (check != -1) return check
+        num -= count
+        i++
+    }
+    return 0
 }
 
-
-/*fun main(args: Array<String>) {
-    val x1x2 = squareSequenceDigit(317016)
+fun main(args: Array<String>) {
+    val x1x2 = squareSequenceDigit(17)
     println("Root product: $x1x2")
-}*/
+}
