@@ -91,6 +91,7 @@ fun fib(n: Int): Int {
         var num = 2
         var fib = 1
         var second = 1
+        var i: Int
         while (true) {
             if (num + 1 == n) return (fib + second)
             else {
@@ -109,15 +110,18 @@ fun fib(n: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
+
+fun maxDelit(m: Int, n: Int): Int {
     var a = m
     var b = n
     while (a != 0 && b != 0) {
         if (a > b) a %= b
         else b %= a
     }
-    return (m * n / (a + b))
+    return a + b
 }
+
+fun lcm(m: Int, n: Int): Int = (m * n) / (maxDelit(m, n))
 
 /**
  * Простая
@@ -154,15 +158,7 @@ fun maxDivisor(n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    var a = m
-    var b = n
-    while (a != b) {
-        if (a > b) a -= b
-        else b -= a
-    }
-    return (a == 1)
-}
+fun isCoPrime(m: Int, n: Int): Boolean = (maxDelit(m, n) == 1)
 
 /**
  * Простая
@@ -172,7 +168,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    for (i in 0..(sqrt(n.toDouble())).toInt() + 1) {
+    for (i in (sqrt(m.toDouble())).toInt() - 1..(sqrt(n.toDouble())).toInt() + 1) {
         if ((i <= sqrt(n.toDouble())) && (i >= sqrt(m.toDouble()))) return true
     }
     return false
@@ -217,15 +213,12 @@ fun collatzSteps(x: Int): Int {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double { //не работает!!!
-    var p = x
+    val xNormal = x % (2 * PI)
+    var p = xNormal
     var fac = 1
-    var ans = x
-    var num = x
-    var denum = 1
+    var ans = p
     while (abs(p) >= eps) {
-        num *= x * x * (-1)
-        denum *= (fac + 1) * (fac + 2)
-        p = num / denum
+        p *= xNormal * xNormal * (-1) / ((fac + 1) * (fac + 2))
         ans += p
         fac += 2
     }
@@ -299,29 +292,36 @@ fun hasDifferentDigits(n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
+fun numberDigit(t: Int): Int {
+    var count = 0
+    var copy = t
+    while (copy > 0) {
+        copy /= 10
+        count++
+    }
+    return count
+}
+
 fun squareSequenceDigit(n: Int): Int {
     var m = n
     var i = 1
     var k: Int
-    var p = 0
+    //var p = 0
     var y = 1
     while (i >= 1) {
         k = i * i
-        var t = k
-        while (t > 0) {
-            t /= 10
-            p++
-        }
+        var p = numberDigit(k)
         if (p == m) return k % 10
         else if (p > m) {
-            if ((p - y) == m) return ((k / 10) % 10)
-            else {
-                k /= 10
-                y++
+            while (true) {
+                if ((p - y) == m) return ((k / 10) % 10)
+                else {
+                    k /= 10
+                    y++
+                }
             }
         }
         m -= p
-        p = 0
         i++
     }
     return 0
@@ -339,25 +339,21 @@ fun squareSequenceDigit(n: Int): Int {
 fun fibSequenceDigit(n: Int): Int { //не проходит последний тест
     var num = n
     var i = 1
-    var count = 0
     var check = 1
     while (true) {
         var fib = fib(i)
-        var copy = fib
-        while (copy > 0) {
-            copy /= 10
-            count++
-        }
+        var count = numberDigit(fib)
         if (count == num) return fib % 10
         else if (count > num) {
-            if ((count - check) == num) return ((fib / 10) % 10)
-            else {
-                fib /= 10
-                check++
+            while (true) {
+                if ((count - check) == num) return ((fib / 10) % 10)
+                else {
+                    fib /= 10
+                    check++
+                }
             }
         }
         num -= count
-        count = 0
         i++
     }
     return 0
@@ -365,6 +361,6 @@ fun fibSequenceDigit(n: Int): Int { //не проходит последний �
 
 
 /*fun main(args: Array<String>) {
-    val x1x2 = fibSequenceDigit(128)
+    val x1x2 = squareSequenceDigit(317016)
     println("Root product: $x1x2")
 }*/
