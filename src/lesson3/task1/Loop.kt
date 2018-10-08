@@ -85,24 +85,6 @@ fun digitNumber(n: Int): Int {
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-/*fun fib(n: Int): Int {
-    if (n == 1 || n == 2) return 1
-    else {
-        var num = 2
-        var fib = 1
-        var second = 1
-        var i: Int
-        while (true) {
-            if (num + 1 == n) return (fib + second)
-            else {
-                var aux = fib
-                fib = second
-                second += aux
-                num++
-            }
-        }
-    }
-}*/
 
 fun fib(n: Int): Int {
     var a = 1
@@ -304,68 +286,33 @@ fun hasDifferentDigits(n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun numberDigit(t: Int): Int {
-    var count = 0
-    var copy = t
-    while (copy > 0) {
-        copy /= 10
-        count++
-    }
-    return count
-}
 
-fun control(a: Int, b: Int, c: Int): Int {
-    var p = a
-    var k = b
-    var m = c
-    var y = 1
-    if (p == m) return k % 10
-    else if (p > m) {
+fun getAnswer(currentNum: Int, num: Int): Int {
+    var count = digitNumber(currentNum)
+    var current = currentNum
+    var i = 1
+    if (count == num) return current % 10
+    else if (count > num) {
         while (true) {
-            if ((p - y) == m) return ((k / 10) % 10)
+            if ((count - i) == num) return ((current / 10) % 10)
             else {
-                k /= 10
-                y++
+                current /= 10
+                i++
             }
         }
     }
     return -1
 }
 
-/*fun squareSequenceDigit(n: Int): Int {
-    var m = n
-    var i = 1
-    var k: Int
-    //var p = 0
-    var y = 1
-    while (i >= 1) {
-        k = i * i
-        var p = numberDigit(k)
-        if (p == m) return k % 10
-        else if (p > m) {
-            while (true) {
-                if ((p - y) == m) return ((k / 10) % 10)
-                else {
-                    k /= 10
-                    y++
-                }
-            }
-        }
-        m -= p
-        i++
-    }
-    return 0
-}*/
 fun squareSequenceDigit(n: Int): Int {
     var num = n
     var i = 1
     var square: Int
-    while (i >= 1) {
+    while (true) {
         square = i * i
-        var count = numberDigit(square)
-        var check = control(count, square, num)
+        var check = getAnswer(square, num)
         if (check != -1) return check
-        num -= count
+        num -= digitNumber(square)
         i++
     }
     return 0
@@ -380,38 +327,15 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-/*fun fibSequenceDigit(n: Int): Int { //не проходит последний тест
-    var num = n
-    var i = 1
-    var check = 1
-    while (true) {
-        var fib = fib(i)
-        var count = numberDigit(fib)
-        if (count == num) return fib % 10
-        else if (count > num) {
-            while (true) {
-                if ((count - check) == num) return ((fib / 10) % 10)
-                else {
-                    fib /= 10
-                    check++
-                }
-            }
-        }
-        num -= count
-        i++
-    }
-    return 0
-} */
 
 fun fibSequenceDigit(n: Int): Int { //не проходит последний тест
     var num = n
     var i = 1
     while (true) {
         var fib = fib(i)
-        var count = numberDigit(fib)
-        var check = control(count, fib, num)
+        var check = getAnswer(fib, num)
         if (check != -1) return check
-        num -= count
+        num -= digitNumber(fib)
         i++
     }
     return 0
