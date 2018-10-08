@@ -340,8 +340,3 @@ fun fibSequenceDigit(n: Int): Int { //не проходит последний �
     }
     return 0
 }
-
-fun main(args: Array<String>) {
-    val x1x2 = squareSequenceDigit(17)
-    println("Root product: $x1x2")
-}
