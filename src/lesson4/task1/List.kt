@@ -467,13 +467,13 @@ fun thousand(n: Int): String {
     var thousandNum = n
     if (thousandNum == 1) //если всего одна тысяча, например: 1
         return hundred(thousandNum - 1) + "одна" + thousand[0]
-    else if (thousandNum % 10 == 1) //если на конце числа стоит 1, например: 201
+    else if (thousandNum % 10 == 1 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 1, но не заканчивается на 11, например: 201
         return hundred(thousandNum - 1) + " одна" + thousand[0]
     else if (thousandNum == 2) //если всего две тысячи, например: 2
         return "две" + thousand[1]
-    else if (thousandNum % 10 == 2) //если на конце числа стоит 2, например: 202
+    else if (thousandNum % 10 == 2 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 2, но не заканчивается на 12, например: 202
         return hundred(thousandNum - 2) + " две" + thousand[1]
-    else if (thousandNum % 10 == 3 || thousandNum % 10 == 4) //если на конце числа стоит 3, например: 203
+    else if ((thousandNum % 10 == 3 || thousandNum % 10 == 4) && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 3 или 4, но не 13 или 14, например: 203
         return hundred(thousandNum) + thousand[1]
     /*else if (thousandNum % 10 in 5..9 || thousandNum % 100 in 10..19) //если на конце числа стоит 5 - 9 или 10 - 19, например: 208
         return hundred(thousandNum) + thousand[2]
@@ -491,6 +491,6 @@ fun russian(n: Int): String {
 
 
 fun main(args: Array<String>) {
-    val x1x2 = russian(35354)
+    val x1x2 = russian(213016)
     println("Root product:$x1x2")
 }
