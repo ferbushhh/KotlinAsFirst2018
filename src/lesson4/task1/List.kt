@@ -457,6 +457,8 @@ fun hundred(n: Int): String {
         hundred[digital / 100] + " " + unit[digital % 10]
     else if (digital % 10 == 0) // если единицы равны 0 (только сотни и десятки), например: 670
         hundred[digital / 100] + " " + decade[(digital % 100) / 10]
+    else if (digital < 100)
+        decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни равны 0 (только десятки и единицы), например: 35
     else hundred[digital / 100] + " " + decade[(digital % 100) / 10] + " " + unit[digital % 10] //все остальное
 }
 
@@ -473,12 +475,10 @@ fun thousand(n: Int): String {
         return hundred(thousandNum - 2) + " две" + thousand[1]
     else if (thousandNum % 10 == 3 || thousandNum % 10 == 4) //если на конце числа стоит 3, например: 203
         return hundred(thousandNum) + thousand[1]
-    else if (thousandNum % 10 in 5..9) //если на конце числа стоит 5 - 9, например: 208
-        return hundred(thousandNum) + thousand[2]
-    else if (thousandNum % 100 in 10..19) //если на конце числа стоит 10 - 19, например: 217
+    /*else if (thousandNum % 10 in 5..9 || thousandNum % 100 in 10..19) //если на конце числа стоит 5 - 9 или 10 - 19, например: 208
         return hundred(thousandNum) + thousand[2]
     else if (thousandNum % 10 == 0 && (thousandNum % 100) / 10 in 2..9) //если последние две цифры 20, 30, 40, ... 90, например: 250
-        return hundred(thousandNum) + thousand[2]
+        return hundred(thousandNum) + thousand[2] */
     else (thousandNum != 0) //все остальные случаи
     return hundred(thousandNum) + thousand[2]
 }
@@ -491,6 +491,6 @@ fun russian(n: Int): String {
 
 
 fun main(args: Array<String>) {
-    val x1x2 = convertToString(0, 2)
+    val x1x2 = russian(35354)
     println("Root product:$x1x2")
 }
