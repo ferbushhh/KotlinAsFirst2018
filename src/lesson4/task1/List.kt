@@ -254,6 +254,10 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
+    if (n == 0) {
+        var listZero = listOf(0)
+        return listZero
+    }
     var int = n
     var list = mutableListOf<Int>()
     while (int != 0) {
@@ -273,10 +277,15 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
+    if (n == 0) {
+        var convertZero: String
+        convertZero = "0"
+        return convertZero
+    }
     var int = n
     var convert = String()
     while (int != 0) {
-        var assistive = String()
+        var assistive: String
         var mod = int % base
         if (mod >= 10) assistive = convert + (mod + 87).toChar()
         else assistive = convert + (mod + 48).toChar()
@@ -462,7 +471,7 @@ fun thousand(n: Int): String {
         return "две" + thousand[1]
     else if (thousandNum % 10 == 2) //если на конце числа стоит 2, например: 202
         return hundred(thousandNum - 2) + " две" + thousand[1]
-    else if (thousandNum % 10 == 3) //если на конце числа стоит 3, например: 203
+    else if (thousandNum % 10 == 3 || thousandNum % 10 == 4) //если на конце числа стоит 3, например: 203
         return hundred(thousandNum) + thousand[1]
     else if (thousandNum % 10 in 5..9) //если на конце числа стоит 5 - 9, например: 208
         return hundred(thousandNum) + thousand[2]
@@ -472,7 +481,6 @@ fun thousand(n: Int): String {
         return hundred(thousandNum) + thousand[2]
     else (thousandNum != 0) //все остальные случаи
     return hundred(thousandNum) + thousand[2]
-    //else return ""
 }
 
 fun russian(n: Int): String {
@@ -483,6 +491,6 @@ fun russian(n: Int): String {
 
 
 fun main(args: Array<String>) {
-    val x1x2 = russian(12)
+    val x1x2 = convertToString(0, 2)
     println("Root product:$x1x2")
 }
