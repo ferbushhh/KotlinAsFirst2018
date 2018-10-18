@@ -116,14 +116,11 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * Модуль пустого вектора считать равным 0.0.
  */
 fun abs(v: List<Double>): Double {
-    return if (v.isEmpty()) 0.0
-    else {
-        var sum = 0.0
-        for (i in 0 until v.size) {
-            sum += v[i] * v[i]
-        }
-        sqrt(sum)
+    var sum = 0.0
+    for (element in v) {
+        sum += element * element
     }
+    return sqrt(sum)
 }
 
 /**
@@ -135,8 +132,8 @@ fun mean(list: List<Double>): Double {
     return if (list.isEmpty()) 0.0
     else {
         var averageValue = 0.0
-        for (i in 0 until list.size)
-            averageValue += list[i]
+        for (element in list)
+            averageValue += element
         averageValue / list.size
     }
 }
@@ -149,10 +146,10 @@ fun mean(list: List<Double>): Double {
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> { //не понимаю смысл :\
+fun center(list: MutableList<Double>): MutableList<Double> {
     return if (list.isEmpty()) list
     else {
-        var average = mean(list)
+        val average = mean(list)
         for (i in 0 until list.size)
             list[i] = list[i] - average
         list
@@ -167,14 +164,11 @@ fun center(list: MutableList<Double>): MutableList<Double> { //не понима
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
 fun times(a: List<Double>, b: List<Double>): Double {
-    return if (a.isEmpty() && b.isEmpty()) 0.0
-    else {
-        var sum = 0.0
-        for (i in 0 until a.size) {
-            sum += a[i] * b[i]
-        }
-        sum
+    var sum = 0.0
+    for (i in 0 until a.size) {
+        sum += a[i] * b[i]
     }
+    return sum
 }
 
 /**
@@ -186,16 +180,13 @@ fun times(a: List<Double>, b: List<Double>): Double {
  * Значение пустого многочлена равно 0.0 при любом x.
  */
 fun polynom(p: List<Double>, x: Double): Double {
-    return if (p.isEmpty()) 0.0
-    else {
-        var xDegree = x
-        var sum = p[0]
-        for (i in 1 until p.size) {
-            sum += p[i] * xDegree
-            xDegree *= x
-        }
-        sum
+    var xDegree = 1.0
+    var sum = 0.0
+    for (element in p) {
+        sum += element * xDegree
+        xDegree *= x
     }
+    return sum
 }
 
 /**
@@ -209,12 +200,9 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    return if (list.isEmpty()) list
-    else {
-        for (i in 1 until list.size)
-            list[i] = list[i - 1] + list[i]
-        list
-    }
+    for (i in 1 until list.size)
+        list[i] = list[i - 1] + list[i]
+    return list
 }
 
 /**
@@ -227,13 +215,14 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
 fun factorize(n: Int): List<Int> {
     var i = 2
     var int = n
-    var list = mutableListOf<Int>()
-    while (int != 1) {
+    val list = mutableListOf<Int>()
+    while (int != i) {
         if (int % i == 0) {
             list.add(i)
             int /= i
         } else i++
     }
+    list.add(i)
     return list
 }
 
@@ -255,14 +244,12 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  */
 fun convert(n: Int, base: Int): List<Int> {
     if (n == 0) {
-        var listZero = listOf(0)
-        return listZero
+        return listOf(0)
     }
     var int = n
-    var list = mutableListOf<Int>()
+    val list = mutableListOf<Int>()
     while (int != 0) {
-        var mod = int % base
-        list.add(mod)
+        list.add(int % base)
         int /= base
     }
     return list.reversed()
@@ -277,22 +264,18 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
+    val englishAl = listOf<String>("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+            "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z")
     if (n == 0) {
-        var convertZero: String
-        convertZero = "0"
-        return convertZero
+        return "0"
     }
-    var int = n
-    var convert = String()
-    while (int != 0) {
-        var assistive: String
-        var mod = int % base
-        if (mod >= 10) assistive = convert + (mod + 87).toChar()
-        else assistive = convert + (mod + 48).toChar()
-        convert = assistive
-        int /= base
+    var convert = StringBuilder()
+    val list = convert(n, base)
+    for (element in list) {
+        if (element > 9) convert.append(englishAl[element - 10])
+        else convert.append(element)
     }
-    return convert.reversed()
+    return convert.toString()
 }
 
 /**
@@ -303,11 +286,12 @@ fun convertToString(n: Int, base: Int): String {
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
 fun decimal(digits: List<Int>, base: Int): Int {
-    var sum = digits.last()
-    var degree = base
-    for (i in (digits.size - 2) downTo 0) {
-        sum += degree * digits[i]
-        degree *= base
+    var sum = 0
+    var degree = 1
+    for (i in 1..(digits.size - 1)) degree *= base
+    for (element in digits) {
+        sum += degree * element
+        degree /= base
     }
     return sum
 }
@@ -322,19 +306,13 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    var last = str.last().toInt()
-    var sum: Int
-    if (last > 57) sum = last - 87
-    else sum = last - 48
-    var degree = base
-    for (i in (str.length - 2) downTo 0) {
-        var assistive: Int
-        if (str[i].toInt() > 57) assistive = str[i].toInt() - 87
-        else assistive = str[i].toInt() - 48
-        sum += degree * assistive
-        degree *= base
+    var list = str.toList()
+    var list2 = mutableListOf<Int>()
+    for (element in list) {
+        if (element > '9') list2.add(element - 'a' + 10)
+        else list2.add(element - '0')
     }
-    return sum
+    return decimal(list2, base)
 }
 
 /**
@@ -345,80 +323,57 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
+
 fun roman(n: Int): String {
+    val listFive = listOf<Char>('D', 'L', 'V')
+    val listTen = listOf<Char>('M', 'C', 'X', 'I')
+    var c = 100
     var arab = n
-    var thousand = arab / 1000
-    var roman = String()
-    if (thousand != 0) {
-        var assistive = String()
-        for (i in 1..thousand) {
-            roman = assistive + "M"
-            assistive = roman
-        }
-    }
+    var roman = StringBuilder()
+    val thousand = arab / 1000
+    for (i in 1..thousand) roman.append(listTen[0])
     arab %= 1000
-    if (arab in 500..899) {
-        var assistive = roman
-        roman = assistive + "D"
-        arab -= 500
-    } else if (arab >= 900) {
-        var assistive = roman
-        roman = assistive + "CM"
-        arab -= 900
-    }
-    var hundred = arab / 100
-    if (hundred in 1..3) {
-        var assistive = roman
-        for (i in 1..hundred) {
-            roman = assistive + "C"
-            assistive = roman
+    var countTen = 1
+    var countFive = 0
+    while (arab != 0) {
+        when {
+            arab / c == 9 -> {
+                roman.append(listTen[countTen])
+                roman.append(listTen[countTen - 1])
+                countTen++
+                countFive++
+                arab -= 9 * c
+                c /= 10
+            }
+            arab / c in 5..8 -> {
+                roman.append(listFive[countFive])
+                countFive++
+                arab -= 5 * c
+            }
+            arab / c == 4 -> {
+                roman.append(listTen[countTen])
+                roman.append(listFive[countFive])
+                countFive++
+                countTen++
+                arab -= 4 * c
+                c /= 10
+            }
+            arab >= c -> {
+                while (arab >= c) {
+                    roman.append(listTen[countTen])
+                    arab -= c
+                }
+                c /= 10
+                countTen++
+            }
+            else -> {
+                c /= 10
+                countTen++
+                countFive++
+            }
         }
-    } else if (hundred == 4) {
-        var assistive = roman
-        roman = assistive + "CD"
     }
-    arab %= 100
-    if (arab in 50..89) {
-        var assistive = roman
-        roman = assistive + "L"
-        arab -= 50
-    } else if (arab >= 90) {
-        var assistive = roman
-        roman = assistive + "XC"
-        arab -= 90
-    }
-    var decade = arab / 10
-    if (decade in 1..3) {
-        var assistive = roman
-        for (i in 1..decade) {
-            roman = assistive + "X"
-            assistive = roman
-        }
-    } else if (decade == 4) {
-        var assistive = roman
-        roman = assistive + "XL"
-    }
-    arab %= 10
-    if (arab in 5..8) {
-        var assistive = roman
-        roman = assistive + "V"
-        arab -= 5
-    } else if (arab == 9) {
-        var assistive = roman
-        roman = assistive + "IX"
-        arab = 0
-    }
-    if (arab in 1..3) {
-        var assistive = roman
-        for (i in 1..arab) {
-            roman = assistive + "I"
-            assistive = roman
-        }
-    } else if (arab == 4) {
-        var assistive = roman
-        roman = assistive + "IV"
-    }
-    return roman
+    return roman.toString()
 }
 
 /**
@@ -430,57 +385,57 @@ fun roman(n: Int): String {
  */
 
 fun hundred(n: Int): String {
-    var hundred = listOf<String>("", "сто", "двести", "триста", "четыреста", "пятьсот",
+    val hundred = listOf<String>("", "сто", "двести", "триста", "четыреста", "пятьсот",
             "шестьсот", "семьсот", "восемьсот", "девятьсот")
-    var decade = listOf<String>("", "", "двадцать", "тридцать", "сорок", "пятьдесят",
+    val decade = listOf<String>("", "", "двадцать", "тридцать", "сорок", "пятьдесят",
             "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
-    var unit = listOf<String>("", "один", "два", "три", "четыре", "пять", "шесть",
+    val unit = listOf<String>("", "один", "два", "три", "четыре", "пять", "шесть",
             "семь", "восемь", "девять")
-    var firstDecade = listOf<String>("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
+    val firstDecade = listOf<String>("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    var digital = n
-    return if (((digital % 100) / 10 == 1) && (digital % 10 != 0) && (digital / 100 != 0)) //если последние две цифры 11 - 19 И есть сотни, например: 317
-        hundred[digital / 100] + " " + firstDecade[digital % 10]
-    else if (digital == 10) //если равно 10, например: 10
-        "десять"
-    else if (((digital % 100) / 10 == 1) && (digital % 10 == 0)) //если на конце 10 И есть сотни, например: 210
-        hundred[digital / 100] + " десять"
-    else if (digital % 10 == 0 && digital % 100 / 10 == 0) //если есть только сотни (десятки и единицы по нулям), например: 400
-        hundred[digital / 100]
-    else if (digital / 100 == 0 && digital % 10 == 0) //если есть только десятки (сотни и единицы равны 0), например: 50
-        decade[digital / 10]
-    else if (digital < 10) //если есть только единицы (сотни и десятки равны 0), например: 7
-        unit[digital]
-    else if (digital in 11..19)// если 11 - 19, например: 16
-        firstDecade[digital % 10]
-    else if (digital % 100 / 10 == 0)// если десятки равны 0 (только единицы и сотни), например: 807
-        hundred[digital / 100] + " " + unit[digital % 10]
-    else if (digital % 10 == 0) // если единицы равны 0 (только сотни и десятки), например: 670
-        hundred[digital / 100] + " " + decade[(digital % 100) / 10]
-    else if (digital < 100)
-        decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни равны 0 (только десятки и единицы), например: 35
-    else hundred[digital / 100] + " " + decade[(digital % 100) / 10] + " " + unit[digital % 10] //все остальное
+    val digital = n
+    return when {
+        (((digital % 100) / 10 == 1) && (digital % 10 != 0) && (digital / 100 != 0)) //если последние две цифры 11 - 19 И есть сотни, например: 317
+        -> hundred[digital / 100] + " " + firstDecade[digital % 10]
+        (digital == 10) //если равно 10, например: 10
+        -> "десять"
+        (((digital % 100) / 10 == 1) && (digital % 10 == 0)) //если на конце 10 И есть сотни, например: 210
+        -> hundred[digital / 100] + " десять"
+        (digital % 10 == 0 && digital % 100 / 10 == 0) //если есть только сотни (десятки и единицы по нулям), например: 400
+        -> hundred[digital / 100]
+        (digital / 100 == 0 && digital % 10 == 0) //если есть только десятки (сотни и единицы равны 0), например: 50
+        -> decade[digital / 10]
+        (digital < 10) //если есть только единицы (сотни и десятки равны 0), например: 7
+        -> unit[digital]
+        (digital in 11..19)// если 11 - 19, например: 16
+        -> firstDecade[digital % 10]
+        (digital % 100 / 10 == 0)// если десятки равны 0 (только единицы и сотни), например: 807
+        -> hundred[digital / 100] + " " + unit[digital % 10]
+        (digital % 10 == 0) // если единицы равны 0 (только сотни и десятки), например: 670
+        -> hundred[digital / 100] + " " + decade[(digital % 100) / 10]
+        (digital < 100)
+        -> decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни равны 0 (только десятки и единицы), например: 35
+        else -> hundred[digital / 100] + " " + decade[(digital % 100) / 10] + " " + unit[digital % 10] //все остальное
+    }
 }
 
 fun thousand(n: Int): String {
-    var thousand = listOf<String>(" тысяча", " тысячи", " тысяч") //окончание тысяч
-    var thousandNum = n
-    if (thousandNum == 1) //если всего одна тысяча, например: 1
-        return hundred(thousandNum - 1) + "одна" + thousand[0]
-    else if (thousandNum % 10 == 1 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 1, но не заканчивается на 11, например: 201
-        return hundred(thousandNum - 1) + " одна" + thousand[0]
-    else if (thousandNum == 2) //если всего две тысячи, например: 2
-        return "две" + thousand[1]
-    else if (thousandNum % 10 == 2 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 2, но не заканчивается на 12, например: 202
-        return hundred(thousandNum - 2) + " две" + thousand[1]
-    else if ((thousandNum % 10 == 3 || thousandNum % 10 == 4) && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 3 или 4, но не 13 или 14, например: 203
-        return hundred(thousandNum) + thousand[1]
-    /*else if (thousandNum % 10 in 5..9 || thousandNum % 100 in 10..19) //если на конце числа стоит 5 - 9 или 10 - 19, например: 208
-        return hundred(thousandNum) + thousand[2]
-    else if (thousandNum % 10 == 0 && (thousandNum % 100) / 10 in 2..9) //если последние две цифры 20, 30, 40, ... 90, например: 250
-        return hundred(thousandNum) + thousand[2] */
-    else (thousandNum != 0) //все остальные случаи
-    return hundred(thousandNum) + thousand[2]
+    val thousand = listOf<String>(" тысяча", " тысячи", " тысяч") //окончание тысяч
+    val thousandNum = n
+    return when {
+        (thousandNum == 1) //если всего одна тысяча, например: 1
+        -> hundred(thousandNum - 1) + "одна" + thousand[0]
+        (thousandNum % 10 == 1 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 1, но не заканчивается на 11, например: 201
+        -> hundred(thousandNum - 1) + " одна" + thousand[0]
+        (thousandNum == 2) //если всего две тысячи, например: 2
+        -> "две" + thousand[1]
+        (thousandNum % 10 == 2 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 2, но не заканчивается на 12, например: 202
+        -> hundred(thousandNum - 2) + " две" + thousand[1]
+        ((thousandNum % 10 == 3 || thousandNum % 10 == 4) && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 3 или 4, но не 13 или 14, например: 203
+        -> hundred(thousandNum) + thousand[1]
+        else //все остальные случаи
+        -> hundred(thousandNum) + thousand[2]
+    }
 }
 
 fun russian(n: Int): String {
@@ -489,8 +444,8 @@ fun russian(n: Int): String {
     else hundred(n % 1000) //тысяч нет
 }
 
-
 fun main(args: Array<String>) {
-    val x1x2 = russian(213016)
+    val x1x2 = roman(1)
     println("Root product:$x1x2")
 }
+
