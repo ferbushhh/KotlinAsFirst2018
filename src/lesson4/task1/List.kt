@@ -269,7 +269,7 @@ fun convertToString(n: Int, base: Int): String {
     if (n == 0) {
         return "0"
     }
-    var convert = StringBuilder()
+    val convert = StringBuilder()
     val list = convert(n, base)
     for (element in list) {
         if (element > 9) convert.append(englishAl[element - 10])
@@ -306,8 +306,8 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    var list = str.toList()
-    var list2 = mutableListOf<Int>()
+    val list = str.toList()
+    val list2 = mutableListOf<Int>()
     for (element in list) {
         if (element > '9') list2.add(element - 'a' + 10)
         else list2.add(element - '0')
@@ -329,7 +329,7 @@ fun roman(n: Int): String {
     val listTen = listOf<Char>('M', 'C', 'X', 'I')
     var c = 100
     var arab = n
-    var roman = StringBuilder()
+    val roman = StringBuilder()
     val thousand = arab / 1000
     for (i in 1..thousand) roman.append(listTen[0])
     arab %= 1000
@@ -405,7 +405,7 @@ fun hundred(n: Int): String {
         -> hundred[digital / 100]
         (digital / 100 == 0 && digital % 10 == 0) //если есть только десятки (сотни и единицы равны 0), например: 50
         -> decade[digital / 10]
-        (digital < 10) //если есть только единицы (сотни и десятки равны 0), например: 7
+        (digital < 10) //если есть только единицы (сотни и десятки = 0), например: 7
         -> unit[digital]
         (digital in 11..19)// если 11 - 19, например: 16
         -> firstDecade[digital % 10]
@@ -442,10 +442,5 @@ fun russian(n: Int): String {
     return if (n > 1000 && n % 1000 == 0) thousand(n / 1000) //число имеет только тысячи (меньшие разряды равны 0)
     else if (n > 1000) thousand(n / 1000) + " " + hundred(n % 1000) //тысячи и более мелкие
     else hundred(n % 1000) //тысяч нет
-}
-
-fun main(args: Array<String>) {
-    val x1x2 = roman(1)
-    println("$x1x2")
 }
 
