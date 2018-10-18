@@ -446,6 +446,6 @@ fun russian(n: Int): String {
 
 fun main(args: Array<String>) {
     val x1x2 = roman(1)
-    println("Root product:$x1x2")
+    println("$x1x2")
 }
 
