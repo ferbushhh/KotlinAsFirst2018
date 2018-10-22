@@ -396,26 +396,27 @@ fun hundred(n: Int): String {
     val digital = n
     return when {
         (((digital % 100) / 10 == 1) && (digital % 10 != 0) && (digital / 100 != 0)) //если последние две цифры 11 - 19 И есть сотни, например: 317
-        -> hundred[digital / 100] + " " + firstDecade[digital % 10]
+            -> hundred[digital / 100] + " " + firstDecade[digital % 10]
         (digital == 10) //если равно 10, например: 10
-        -> "десять"
+            -> "десять"
         (((digital % 100) / 10 == 1) && (digital % 10 == 0)) //если на конце 10 И есть сотни, например: 210
-        -> hundred[digital / 100] + " десять"
+            -> hundred[digital / 100] + " десять"
         (digital % 10 == 0 && digital % 100 / 10 == 0) //если есть только сотни (десятки и единицы по нулям), например: 400
-        -> hundred[digital / 100]
+            -> hundred[digital / 100]
         (digital / 100 == 0 && digital % 10 == 0) //если есть только десятки (сотни и единицы равны 0), например: 50
-        -> decade[digital / 10]
+            -> decade[digital / 10]
         (digital < 10) //если есть только единицы (сотни и десятки равны 0), например: 7
-        -> unit[digital]
+            -> unit[digital]
         (digital in 11..19)// если 11 - 19, например: 16
-        -> firstDecade[digital % 10]
+            -> firstDecade[digital % 10]
         (digital % 100 / 10 == 0)// если десятки равны 0 (только единицы и сотни), например: 807
-        -> hundred[digital / 100] + " " + unit[digital % 10]
+            -> hundred[digital / 100] + " " + unit[digital % 10]
         (digital % 10 == 0) // если единицы равны 0 (только сотни и десятки), например: 670
-        -> hundred[digital / 100] + " " + decade[(digital % 100) / 10]
+            -> hundred[digital / 100] + " " + decade[(digital % 100) / 10]
         (digital < 100)
-        -> decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни равны 0 (только десятки и единицы), например: 35
-        else -> hundred[digital / 100] + " " + decade[(digital % 100) / 10] + " " + unit[digital % 10] //все остальное
+            -> decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни = 0 (только десятки и единицы), например: 35
+        else
+            -> hundred[digital / 100] + " " + decade[(digital % 100) / 10] + " " + unit[digital % 10] //все остальное
     }
 }
 
@@ -424,17 +425,17 @@ fun thousand(n: Int): String {
     val thousandNum = n
     return when {
         (thousandNum == 1) //если всего одна тысяча, например: 1
-        -> hundred(thousandNum - 1) + "одна" + thousand[0]
+            -> hundred(thousandNum - 1) + "одна" + thousand[0]
         (thousandNum % 10 == 1 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 1, но не заканчивается на 11, например: 201
-        -> hundred(thousandNum - 1) + " одна" + thousand[0]
+            -> hundred(thousandNum - 1) + " одна" + thousand[0]
         (thousandNum == 2) //если всего две тысячи, например: 2
-        -> "две" + thousand[1]
+            -> "две" + thousand[1]
         (thousandNum % 10 == 2 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 2, но не заканчивается на 12, например: 202
-        -> hundred(thousandNum - 2) + " две" + thousand[1]
+            -> hundred(thousandNum - 2) + " две" + thousand[1]
         ((thousandNum % 10 == 3 || thousandNum % 10 == 4) && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 3 или 4, но не 13 или 14, например: 203
-        -> hundred(thousandNum) + thousand[1]
+            -> hundred(thousandNum) + thousand[1]
         else //все остальные случаи
-        -> hundred(thousandNum) + thousand[2]
+            -> hundred(thousandNum) + thousand[2]
     }
 }
 
