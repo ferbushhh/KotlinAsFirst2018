@@ -414,7 +414,7 @@ fun hundred(digital: Int): String {
         (digital % 10 == 0) // если единицы равны 0 (только сотни и десятки), например: 670
             -> hundred[digital / 100] + " " + decade[(digital % 100) / 10]
         (digital < 100)
-            -> decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни = 0 (только десятки и единицы), например: 35
+            -> decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни равно 0 (только десятки и единицы), например: 35
         else
             -> hundred[digital / 100] + " " + decade[(digital % 100) / 10] + " " + unit[digital % 10] //все остальное
     }
