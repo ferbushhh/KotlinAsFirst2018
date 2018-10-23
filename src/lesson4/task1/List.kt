@@ -421,7 +421,7 @@ fun hundred(digital: Int): String {
 }
 
 fun thousand(thousandNum: Int): String {
-    val thousand = listOf(" тысяча", " тысячи", " тысяч") //окончание тысяч
+    val thousand = listOf<String>(" тысяча", " тысячи", " тысяч") //окончание тысяч
     return when {
         (thousandNum == 1) //если всего одна тысяча, например: 1
             -> hundred(thousandNum - 1) + "одна" + thousand[0]
