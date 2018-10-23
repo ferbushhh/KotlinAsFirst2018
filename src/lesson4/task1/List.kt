@@ -215,17 +215,20 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
 fun factorize(n: Int): List<Int> {
     var i = 2
     var int = n
+    var sqrt = (sqrt(n.toDouble())).toInt()
     val list = mutableListOf<Int>()
-    while (int != i) {
+    while (i <= sqrt) {
+        if (int == 1) break
         if (int % i == 0) {
             list.add(i)
             int /= i
         }
         else i++
     }
-    list.add(i)
+    if (i > sqrt) list.add(i)
     return list
 }
+
 
 /**
  * Сложная
@@ -265,16 +268,14 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
-    val englishAl = listOf<String>("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-            "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z")
     if (n == 0) {
         return "0"
     }
     val convert = StringBuilder()
     val list = convert(n, base)
     for (element in list) {
-        if (element > 9) convert.append(englishAl[element - 10])
-        else convert.append(element)
+        if (element > 9) convert.append((element + 'a'.toInt() - 10).toChar())
+        else convert.append((element + '0'.toInt()).toChar())
     }
     return convert.toString()
 }
@@ -289,10 +290,9 @@ fun convertToString(n: Int, base: Int): String {
 fun decimal(digits: List<Int>, base: Int): Int {
     var sum = 0
     var degree = 1
-    for (i in 1..(digits.size - 1)) degree *= base
-    for (element in digits) {
+    for (element in digits.reversed()) {
         sum += degree * element
-        degree /= base
+        degree *= base
     }
     return sum
 }
@@ -307,9 +307,8 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val list = str.toList()
     val list2 = mutableListOf<Int>()
-    for (element in list) {
+    for (element in str) {
         if (element > '9') list2.add(element - 'a' + 10)
         else list2.add(element - '0')
     }
