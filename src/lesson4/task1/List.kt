@@ -220,7 +220,8 @@ fun factorize(n: Int): List<Int> {
         if (int % i == 0) {
             list.add(i)
             int /= i
-        } else i++
+        }
+        else i++
     }
     list.add(i)
     return list
@@ -384,7 +385,7 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 
-fun hundred(n: Int): String {
+fun hundred(digital: Int): String {
     val hundred = listOf<String>("", "сто", "двести", "триста", "четыреста", "пятьсот",
             "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val decade = listOf<String>("", "", "двадцать", "тридцать", "сорок", "пятьдесят",
@@ -393,7 +394,6 @@ fun hundred(n: Int): String {
             "семь", "восемь", "девять")
     val firstDecade = listOf<String>("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    val digital = n
     return when {
         (((digital % 100) / 10 == 1) && (digital % 10 != 0) && (digital / 100 != 0)) //если последние две цифры 11 - 19 И есть сотни, например: 317
             -> hundred[digital / 100] + " " + firstDecade[digital % 10]
@@ -420,9 +420,8 @@ fun hundred(n: Int): String {
     }
 }
 
-fun thousand(n: Int): String {
+fun thousand(thousandNum: Int): String {
     val thousand = listOf<String>(" тысяча", " тысячи", " тысяч") //окончание тысяч
-    val thousandNum = n
     return when {
         (thousandNum == 1) //если всего одна тысяча, например: 1
             -> hundred(thousandNum - 1) + "одна" + thousand[0]
