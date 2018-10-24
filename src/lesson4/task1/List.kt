@@ -222,8 +222,7 @@ fun factorize(n: Int): List<Int> {
         if (int % i == 0) {
             list.add(i)
             int /= i
-        }
-        else i++
+        } else i++
     }
     if (i > sqrt) list.add(i)
     return list
@@ -325,7 +324,7 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 
 fun roman(n: Int): String {
-    val listFive = listOf<Char>('D', 'L', 'V')
+    /*val listFive = listOf<Char>('D', 'L', 'V')
     val listTen = listOf<Char>('M', 'C', 'X', 'I')
     var c = 100
     var arab = n
@@ -373,9 +372,60 @@ fun roman(n: Int): String {
             }
         }
     }
+    return roman.toString() */
+    val list = mutableListOf<Int>()
+    var c = 100
+    var arab = n
+    val thousand = arab / 1000
+    for (i in 1..thousand) list.add(1000)
+    arab %= 1000
+    while (arab != 0) {
+        when {
+            arab / c == 9 -> {
+                list.add(9 * c)
+                arab -= 9 * c
+                c /= 10
+            }
+            arab / c in 5..8 -> {
+                list.add(5 * c)
+                arab -= 5 * c
+            }
+            arab / c == 4 -> {
+                list.add(4 * c)
+                arab -= 4 * c
+                c /= 10
+            }
+            arab >= c -> {
+                while (arab >= c) {
+                    list.add(c)
+                    arab -= c
+                }
+                c /= 10
+            }
+            else -> c /= 10
+        }
+    }
+    val roman = StringBuilder()
+    for (element in list) {
+        when (element) {
+            1 -> roman.append('I')
+            4 -> roman.append("IV")
+            5 -> roman.append('V')
+            9 -> roman.append("IX")
+            10 -> roman.append('X')
+            40 -> roman.append("XL")
+            50 -> roman.append('L')
+            90 -> roman.append("XC")
+            100 -> roman.append('C')
+            400 -> roman.append("CD")
+            500 -> roman.append('D')
+            900 -> roman.append("CM")
+            1000 -> roman.append('M')
+            else -> roman.append("error")
+        }
+    }
     return roman.toString()
 }
-
 /**
  * Очень сложная
  *
