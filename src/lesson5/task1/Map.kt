@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import java.awt.geom.QuadCurve2D
+
 /**
  * Пример
  *
@@ -94,7 +96,23 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    val listName = mutableListOf<String>()
+    val listNumber = mutableListOf<String>()
+    val mapB2 = mapB.toMutableMap()
+    var result = mapB2
+    for ((first, second) in mapA) {
+        listName.add(first)
+        listNumber.add(second)
+    }
+    for ((name, number) in mapB2) {
+        if (name in listName && number !in listNumber){
+            var i = listName.indexOf(name)
+            result[name] = "${listNumber.toString()}, $number"
+        }
+    }
+    return result
+}
 
 /**
  * Простая
@@ -106,7 +124,28 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
+fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
+    val score5 = mutableListOf<String>()
+    val score4 = mutableListOf<String>()
+    val score3 = mutableListOf<String>()
+    val score2 = mutableListOf<String>()
+    for ((student, score) in grades) {
+        if (score == 5) score5.add(student)
+        if (score == 4) score4.add(student)
+        if (score == 3) score3.add(student)
+        if (score == 2) score2.add(student)
+    }
+    var buildGrades = mapOf(
+            5 to score5.toList().sortedDescending(),
+            4 to score4.toList().sortedDescending(),
+            3 to score3.toList().sortedDescending(),
+            2 to score2.toList().sortedDescending())
+    if (score5.isEmpty()) buildGrades -= 5
+    if (score4.isEmpty()) buildGrades -= 4
+    if (score3.isEmpty()) buildGrades -= 3
+    if (score2.isEmpty()) buildGrades -= 2
+    return buildGrades
+}
 
 /**
  * Простая
@@ -118,7 +157,23 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+    var bool = false
+    var listKey = mutableListOf<String>()
+    var listValue = mutableListOf<String>()
+    for ((key, value) in b) {
+        listKey.add(key)
+        listValue.add(value)
+    }
+    for ((key, value) in a) {
+        if (key in listKey && value in listValue) bool = true
+        else {
+            bool = false
+            break
+        }
+    }
+    return bool
+}
 
 /**
  * Средняя
@@ -130,7 +185,37 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
+    var flag = false
+    var key = " "
+    var sum = 0.0
+    var i = 1.0
+    var result = mutableMapOf<String, Double>()
+    if (stockPrices.isEmpty()) return result
+    for ((first, second) in stockPrices) {
+        if (first == key) flag = true
+        else if (key != " ") {
+            flag = false
+            if (i == 1.0) result[key] = sum
+            else result[key] = sum / i
+        }
+        if (!flag) {
+            key = first
+            sum = second
+            i = 1.0
+        } else {
+            sum += second
+            i++
+        }
+    }
+    if (i == 1.0) result[key] = sum
+    else {
+        result[key] = sum / i
+    }
+    return result
+}
+
+
 
 /**
  * Средняя
