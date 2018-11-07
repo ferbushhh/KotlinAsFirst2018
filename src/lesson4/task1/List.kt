@@ -326,54 +326,31 @@ fun decimalFromString(str: String, base: Int): Int {
 
 fun roman(n: Int): String {
     val arabRoman = mapOf(
-            1 to "I",
-            4 to "IV",
-            5 to "V",
-            9 to "IX",
-            10 to "X",
-            40 to "XL",
-            50 to "L",
-            90 to "XC",
-            100 to "C",
-            400 to "CD",
-            500 to "D",
+            1000 to "M",
             900 to "CM",
-            1000 to "M"
+            500 to "D",
+            400 to "CD",
+            100 to "C",
+            90 to "XC",
+            50 to "L",
+            40 to "XL",
+            10 to "X",
+            9 to "IX",
+            5 to "V",
+            4 to "IV",
+            1 to "I"
     )
     val roman = StringBuilder()
-    var c = 100
     var arab = n
-    val thousand = arab / 1000
-    for (i in 1..thousand) roman.append(arabRoman[1000]!!)
-    arab %= 1000
-    while (arab != 0) {
-        when {
-            arab / c == 9 -> {
-                roman.append(arabRoman[9 * c]!!)
-                arab -= 9 * c
-                c /= 10
-            }
-            arab / c in 5..8 -> {
-                roman.append(arabRoman[5 * c]!!)
-                arab -= 5 * c
-            }
-            arab / c == 4 -> {
-                roman.append(arabRoman[4 * c]!!)
-                arab -= 4 * c
-                c /= 10
-            }
-            arab >= c -> {
-                while (arab >= c) {
-                    roman.append(arabRoman[c]!!)
-                    arab -= c
-                }
-                c /= 10
-            }
-            else -> c /= 10
+    for ((a, r) in arabRoman) {
+        while (arab >= a) {
+            roman.append(r)
+            arab -= a
         }
     }
     return roman.toString()
 }
+
 /**
  * Очень сложная
  *
@@ -381,65 +358,44 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-
 fun hundred(digital: Int): String {
+    var result = mutableListOf<String>()
     val hundred = listOf("", "сто", "двести", "триста", "четыреста", "пятьсот",
             "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val decade = listOf("", "", "двадцать", "тридцать", "сорок", "пятьдесят",
             "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
     val unit = listOf("", "один", "два", "три", "четыре", "пять", "шесть",
             "семь", "восемь", "девять")
-    val firstDecade = listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
+    val firstDecade = listOf("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    return when {
-        (((digital % 100) / 10 == 1) && (digital % 10 != 0)) //если последние две цифры 11 - 19, например: 317
-        -> {
-            if (digital / 100 == 0)
-                firstDecade[digital % 10]
-            else {
-                hundred[digital / 100] + " " + firstDecade[digital % 10]
-            }
-        }
-        ((digital % 100) / 10 == 1 && digital % 10 == 0) //если на конце стоит 10, например: 610
-        -> {
-            if (digital / 100 == 0)
-                "десять"
-            else {
-                hundred[digital / 100] + " десять"
-            }
-        }
-        (digital % 10 == 0 && digital % 100 / 10 == 0) //если есть только сотни (десятки и единицы по нулям), например: 400
-            -> hundred[digital / 100]
-        (digital / 100 == 0 && digital % 10 == 0) //если есть только десятки (сотни и единицы равны 0), например: 50
-            -> decade[digital / 10]
-        (digital < 10) //если есть только единицы (сотни и десятки равны 0), например: 7
-            -> unit[digital]
-        (digital % 100 / 10 == 0)// если десятки равны 0 (только единицы и сотни), например: 807
-            -> hundred[digital / 100] + " " + unit[digital % 10]
-        (digital % 10 == 0) // если единицы равны 0 (только сотни и десятки), например: 670
-            -> hundred[digital / 100] + " " + decade[(digital % 100) / 10]
-        (digital < 100)
-            -> decade[(digital % 100) / 10] + " " + unit[digital % 10] //если сотни равно 0 (только десятки и единицы), например: 35
-        else
-            -> hundred[digital / 100] + " " + decade[(digital % 100) / 10] + " " + unit[digital % 10] //все остальное
+    result.add(hundred[digital / 100])
+    if (digital % 100 / 10 == 1) {
+        result.add(firstDecade[digital % 10])
+    } else {
+        result.add(decade[(digital % 100) / 10])
+        result.add(unit[digital % 10])
     }
+    for (element in result)
+        if (element.isEmpty()) result.remove(element)
+
+    return result.joinToString(separator = " ")
 }
 
 fun thousand(thousandNum: Int): String {
     val thousand = listOf(" тысяча", " тысячи", " тысяч") //окончание тысяч
     return when {
         (thousandNum == 1) //если всего одна тысяча, например: 1
-            -> hundred(thousandNum - 1) + "одна" + thousand[0]
+        -> hundred(thousandNum - 1) + "одна" + thousand[0]
         (thousandNum % 10 == 1 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 1, но не заканчивается на 11, например: 201
-            -> hundred(thousandNum - 1) + " одна" + thousand[0]
+        -> hundred(thousandNum - 1) + " одна" + thousand[0]
         (thousandNum == 2) //если всего две тысячи, например: 2
-            -> "две" + thousand[1]
+        -> "две" + thousand[1]
         (thousandNum % 10 == 2 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 2, но не заканчивается на 12, например: 202
-            -> hundred(thousandNum - 2) + " две" + thousand[1]
+        -> hundred(thousandNum - 2) + " две" + thousand[1]
         ((thousandNum % 10 == 3 || thousandNum % 10 == 4) && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 3 или 4, но не 13 или 14, например: 203
-            -> hundred(thousandNum) + thousand[1]
+        -> hundred(thousandNum) + thousand[1]
         else //все остальные случаи
-            -> hundred(thousandNum) + thousand[2]
+        -> hundred(thousandNum) + thousand[2]
     }
 }
 
@@ -448,4 +404,3 @@ fun russian(n: Int): String {
     else if (n > 1000) thousand(n / 1000) + " " + hundred(n % 1000) //тысячи и более мелкие
     else hundred(n % 1000) //тысяч нет
 }
-
