@@ -2,7 +2,6 @@
 
 package lesson5.task1
 
-val MAX_VALUE_DOUBLE = 1.7976931348623157E308
 
 /**
  * Пример
@@ -97,14 +96,16 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    var result = mutableMapOf<String, String>()
-    mapA.forEach { (name, number) ->
-        if (mapB.containsKey(name) && number != mapB[name]) result[name] = "$number, ${mapB[name]}"
-        else result[name] = number
+    val result = mutableMapOf<String, String>()
+    var telephoneNumber: String
+    for ((name, number) in mapA) {
+        if (mapB.containsKey(name)) {
+            telephoneNumber = mapB[name]!!
+            if (number != telephoneNumber) result[name] = "$number, $telephoneNumber"
+        } else result[name] = number
     }
-    mapB.forEach { name, number ->
+    for ((name, number) in mapB)
         if (!result.containsKey(name)) result[name] = number
-    }
     return result
 }
 
@@ -119,17 +120,15 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    var gradesReverse = mutableMapOf<Int, MutableList<String>>()
-    var list = mutableListOf<String>()
-    grades.forEach { name, grade ->
+    val gradesReverse = mutableMapOf<Int, MutableList<String>>()
+    for ((name, grade) in grades) {
         if (gradesReverse.containsKey(grade)) {
-            list = gradesReverse[grade]!!.toMutableList()
+            val list = gradesReverse[grade]!!
             list.add(name)
-            gradesReverse[grade] = list
         } else {
-            var newList = mutableListOf<String>()
+            val newList = mutableListOf<String>() //надо name закинуть в аргументы mutablelist, но как ??
             newList.add(name)
-            gradesReverse[grade] = newList
+            gradesReverse[grade]?.add(name)
         }
     }
     gradesReverse.forEach { _, students ->
@@ -149,11 +148,9 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    var flag = true
-    a.forEach { key, value ->
-        if (!b.containsKey(key) || b.containsKey(key) && b[key] != value) flag = false
-    }
-    return flag
+    for ((key, value) in a)
+        if (b[key] != value) return false
+    return true
 }
 
 /**
@@ -168,28 +165,22 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     var list: MutableList<Double>
-    var result = mutableMapOf<String, Double>()
-    var intervalList = mutableMapOf<String, List<Double>>()
+    val result = mutableMapOf<String, Double>()
+    val intervalList = mutableMapOf<String, MutableList<Double>>()
     if (stockPrices.isEmpty()) return result
     for ((promo, price) in stockPrices) {
         if (intervalList.containsKey(promo)) {
-            list = intervalList[promo]!!.toMutableList()
+            list = intervalList[promo]!! //сразу mutablelist в map ???
             list.add(price)
             intervalList[promo] = list
         } else {
-            var newList = mutableListOf<Double>()
+            var newList = mutableListOf<Double>() //опять записать все в одну строку, без доп переменных. как???
             newList.add(price)
             intervalList[promo] = newList
         }
     }
     for ((promo, priceInList) in intervalList) {
-        if (priceInList.size != 1) {
-            var sum = 0.0
-            for (i in 0 until priceInList.size) {
-                sum += priceInList[i]
-            }
-            result[promo] = sum / priceInList.size
-        } else result[promo] = priceInList[0]
+        result[promo] = priceInList.average()
     }
     return result
 }
@@ -210,16 +201,16 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var timeMap = mutableMapOf<String, Double>()
+    var timeMap = mutableMapOf<String, Double>() //можно без него ???
     var result = ""
     stuff.forEach { name, (type, price) ->
         if (type == kind) timeMap[name] = price
     }
     if (timeMap.isEmpty()) return null
     else {
-        var min = MAX_VALUE_DOUBLE
+        var min = Double.MAX_VALUE
         timeMap.forEach { name, price ->
-            if (timeMap[name]!! < min) {
+            if (price!! < min) {
                 min = price
                 result = name
             }
@@ -252,21 +243,6 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun findFriends(person: String, friends: Map<String, Set<String>>, past: Set<String>): Set<String> {
-    var pastCopy = past.toMutableSet()
-    if (!friends.containsKey(person) || pastCopy.contains(person)) return setOf()
-    pastCopy.add(person)
-    var hisFriend = friends[person]
-    var hisFriendCopy = mutableSetOf<String>()
-    hisFriendCopy = hisFriend!!.toMutableSet()
-    for (name in hisFriend!!) {
-        for (human in findFriends(name, friends, pastCopy)) {
-            hisFriendCopy.add(human)
-        }
-    }
-    if (person in hisFriendCopy) hisFriendCopy.remove(person)
-    return hisFriendCopy
-}
 
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     var allPeople = mutableSetOf<String>()
@@ -277,12 +253,35 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     }
     var result = mutableMapOf<String, Set<String>>()
     for (name in allPeople) {
-        var test = setOf<String>()
-        result[name] = findFriends(name, friends, test)
+        if (!friends.containsKey(name)) result[name] = setOf()
+        else {
+            result[name] = friends[name]!!
+            val allPeopleCopy = (allPeople - name).toMutableSet()
+            while (result[name]!!.intersect(allPeopleCopy).isNotEmpty()) {
+                var newSet = result[name]!!.intersect(allPeopleCopy)
+                for (element in newSet) {
+                    if (friends.containsKey(element)) {
+                        result[name]!!.addAll(friends[element]!!))
+                        //allPeopleCopy.remove(element)
+                    }
+                    allPeopleCopy.remove(element)
+                    //result[element] = setOf()
+                }
+            }
+        }
     }
     return result
 }
 
+fun main(args: Array<String>) {
+    val x = propagateHandshakes(
+            mapOf(
+                    "Marat" to setOf("Mikhail", "Sveta"),
+                    "Sveta" to setOf("Marat"),
+                    "Mikhail" to setOf("Sveta")
+            ))
+    println("$x")
+}
 /**
  * Простая
  *
@@ -361,10 +360,11 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    var list2: MutableList<Int>
     for (i in 0 until list.size) {
-        for (j in i + 1 until list.size) {
-            if (list[i] + list[j] == number) return Pair(i, j)
-        }
+        list2 = list.toMutableList()
+        list2.removeAt(i)
+        if ((number - list[i]) in list2) return Pair(i, list.indexOf(number - list[i]))
     }
     return Pair(-1, -1)
 }

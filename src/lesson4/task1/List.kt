@@ -325,7 +325,7 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 
 fun roman(n: Int): String {
-    val arabRoman = mapOf(
+    val arabRoman = linkedMapOf(
             1000 to "M",
             900 to "CM",
             500 to "D",
@@ -375,28 +375,18 @@ fun hundred(digital: Int): String {
         result.add(decade[(digital % 100) / 10])
         result.add(unit[digital % 10])
     }
-    for (element in result)
-        if (element.isEmpty()) result.remove(element)
-
-    return result.joinToString(separator = " ")
+    return result.filter { it.isNotEmpty() }.joinToString(separator = " ")
 }
 
 fun thousand(thousandNum: Int): String {
-    val thousand = listOf(" тысяча", " тысячи", " тысяч") //окончание тысяч
-    return when {
-        (thousandNum == 1) //если всего одна тысяча, например: 1
-        -> hundred(thousandNum - 1) + "одна" + thousand[0]
-        (thousandNum % 10 == 1 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 1, но не заканчивается на 11, например: 201
-        -> hundred(thousandNum - 1) + " одна" + thousand[0]
-        (thousandNum == 2) //если всего две тысячи, например: 2
-        -> "две" + thousand[1]
-        (thousandNum % 10 == 2 && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 2, но не заканчивается на 12, например: 202
-        -> hundred(thousandNum - 2) + " две" + thousand[1]
-        ((thousandNum % 10 == 3 || thousandNum % 10 == 4) && (thousandNum % 100) / 10 != 1) //если на конце числа стоит 3 или 4, но не 13 или 14, например: 203
-        -> hundred(thousandNum) + thousand[1]
-        else //все остальные случаи
-        -> hundred(thousandNum) + thousand[2]
-    }
+    val thousand = listOf(" тысяч", "на тысяча", "ве тысячи", "ри тысячи", "ре тысячи")
+    var unit = 0
+    if (thousandNum % 10 in 1..4 && thousandNum % 100 / 10 != 1) unit = thousandNum % 10
+    var result = mutableListOf<String>()
+    if (unit in 1..4) result.add(hundred(thousandNum).removeRange(hundred(thousandNum).length - 2, hundred(thousandNum).length))
+    else result.add(hundred(thousandNum))
+    result.add(thousand[unit])
+    return result.joinToString(separator = "")
 }
 
 fun russian(n: Int): String {
@@ -404,3 +394,5 @@ fun russian(n: Int): String {
     else if (n > 1000) thousand(n / 1000) + " " + hundred(n % 1000) //тысячи и более мелкие
     else hundred(n % 1000) //тысяч нет
 }
+
+
