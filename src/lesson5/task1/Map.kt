@@ -97,10 +97,9 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val result = mutableMapOf<String, String>()
-    var telephoneNumber: String
     for ((name, number) in mapA) {
-        if (mapB.containsKey(name)) {
-            telephoneNumber = mapB[name]!!
+        val telephoneNumber = mapB[name]
+        if (telephoneNumber != null) {
             if (number != telephoneNumber) result[name] = "$number, $telephoneNumber"
         } else result[name] = number
     }
@@ -122,17 +121,13 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val gradesReverse = mutableMapOf<Int, MutableList<String>>()
     for ((name, grade) in grades) {
-        if (gradesReverse.containsKey(grade)) {
-            val list = gradesReverse[grade]!!
+        val list = gradesReverse[grade]
+        if (list != null) {
             list.add(name)
         } else {
-            val newList = mutableListOf<String>() //надо name закинуть в аргументы mutablelist, но как ??
-            newList.add(name)
-            gradesReverse[grade]?.add(name)
+            val newList = mutableListOf(name)
+            gradesReverse[grade] = newList
         }
-    }
-    gradesReverse.forEach { _, students ->
-        students.sortDescending()
     }
     return gradesReverse
 }
@@ -164,18 +159,15 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    var list: MutableList<Double>
     val result = mutableMapOf<String, Double>()
     val intervalList = mutableMapOf<String, MutableList<Double>>()
     if (stockPrices.isEmpty()) return result
     for ((promo, price) in stockPrices) {
-        if (intervalList.containsKey(promo)) {
-            list = intervalList[promo]!! //сразу mutablelist в map ???
-            list.add(price)
-            intervalList[promo] = list
+        val testList = intervalList[promo]
+        if (testList != null) {
+            testList.add(price)
         } else {
-            var newList = mutableListOf<Double>() //опять записать все в одну строку, без доп переменных. как???
-            newList.add(price)
+            var newList = mutableListOf(price) //опять записать все в одну строку, без доп переменных. как???
             intervalList[promo] = newList
         }
     }
@@ -201,22 +193,18 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var timeMap = mutableMapOf<String, Double>() //можно без него ???
     var result = ""
+    var min = Double.MAX_VALUE
     stuff.forEach { name, (type, price) ->
-        if (type == kind) timeMap[name] = price
-    }
-    if (timeMap.isEmpty()) return null
-    else {
-        var min = Double.MAX_VALUE
-        timeMap.forEach { name, price ->
-            if (price!! < min) {
+        if (type == kind) {
+            if (price < min) {
                 min = price
                 result = name
             }
         }
     }
-    return result
+    return if (min == Double.MAX_VALUE) null
+    else result
 }
 
 /**
@@ -251,21 +239,20 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         for (person in friends)
             allPeople.add(person)
     }
-    var result = mutableMapOf<String, Set<String>>()
+    var result = mutableMapOf<String, MutableSet<String>>()
     for (name in allPeople) {
-        if (!friends.containsKey(name)) result[name] = setOf()
+        if (!friends.containsKey(name)) result[name] = mutableSetOf()
         else {
-            result[name] = friends[name]!!
+            result[name] = friends[name]!!.toMutableSet()
             val allPeopleCopy = (allPeople - name).toMutableSet()
             while (result[name]!!.intersect(allPeopleCopy).isNotEmpty()) {
                 var newSet = result[name]!!.intersect(allPeopleCopy)
                 for (element in newSet) {
                     if (friends.containsKey(element)) {
-                        result[name]!!.addAll(friends[element]!!))
-                        //allPeopleCopy.remove(element)
+                        result[name]!!.addAll(friends[element]!!)
+                        if (name in result[name]!!) result[name]!!.remove(name)
                     }
                     allPeopleCopy.remove(element)
-                    //result[element] = setOf()
                 }
             }
         }
@@ -273,15 +260,6 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     return result
 }
 
-fun main(args: Array<String>) {
-    val x = propagateHandshakes(
-            mapOf(
-                    "Marat" to setOf("Mikhail", "Sveta"),
-                    "Sveta" to setOf("Marat"),
-                    "Mikhail" to setOf("Sveta")
-            ))
-    println("$x")
-}
 /**
  * Простая
  *
@@ -360,11 +338,24 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    var list2: MutableList<Int>
+    var flag = false
+    var find = 0
+    var first = -1
     for (i in 0 until list.size) {
-        list2 = list.toMutableList()
-        list2.removeAt(i)
-        if ((number - list[i]) in list2) return Pair(i, list.indexOf(number - list[i]))
+        if (!flag) {
+            val ele = number - list[i]
+            val list2 = list.subList(i + 1, list.size).toSet()
+            val listCopy = list2.toMutableSet()
+            listCopy.add(ele)
+            if (list2 == listCopy) {
+                flag = true
+                find = ele
+                first = i
+            }
+        } else {
+            if (list[i] == find) return Pair(first, i)
+        }
+
     }
     return Pair(-1, -1)
 }
