@@ -167,7 +167,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
         if (testList != null) {
             testList.add(price)
         } else {
-            var newList = mutableListOf(price) //опять записать все в одну строку, без доп переменных. как???
+            val newList = mutableListOf(price)
             intervalList[promo] = newList
         }
     }
@@ -193,18 +193,18 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var result = ""
+    var result: String?
+    result = null
     var min = Double.MAX_VALUE
     stuff.forEach { name, (type, price) ->
         if (type == kind) {
-            if (price < min) {
+            if (price <= min) {
                 min = price
                 result = name
             }
         }
     }
-    return if (min == Double.MAX_VALUE) null
-    else result
+    return result
 }
 
 /**
