@@ -233,29 +233,37 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    var allPeople = mutableSetOf<String>()
-    friends.forEach { name, friends ->
+    val allPeople = mutableSetOf<String>()
+    for ((name, friend) in friends) {
         allPeople.add(name)
-        for (person in friends)
-            allPeople.add(person)
+        allPeople.addAll(friend)
     }
-    var result = mutableMapOf<String, MutableSet<String>>()
+    val result = mutableMapOf<String, MutableSet<String>>()
     for (name in allPeople) {
-        if (!friends.containsKey(name)) result[name] = mutableSetOf()
+        val mainFriends = friends[name]
+        var r = mutableSetOf<String>("")
+        if (mainFriends == null) result[name] = mutableSetOf()
         else {
-            result[name] = friends[name]!!.toMutableSet()
-            val allPeopleCopy = (allPeople - name).toMutableSet()
-            while (result[name]!!.intersect(allPeopleCopy).isNotEmpty()) {
-                var newSet = result[name]!!.intersect(allPeopleCopy)
-                for (element in newSet) {
-                    if (friends.containsKey(element)) {
-                        result[name]!!.addAll(friends[element]!!)
-                        if (name in result[name]!!) result[name]!!.remove(name)
+            val resultFriends = mainFriends.toMutableSet()
+            val allPeopleCopy = allPeople.toMutableSet()
+            allPeopleCopy.remove(name)
+            loop@ while (true) {
+                val newSet = resultFriends.intersect(allPeopleCopy)
+                if (newSet.isEmpty()) break@loop
+                else {
+                    for (element in newSet) {
+                        val friendsFriend = friends[element]
+                        if (friendsFriend != null) {
+                            resultFriends.addAll(friendsFriend)
+                            resultFriends.remove(name)
+                        }
+                        allPeopleCopy.remove(element)
                     }
-                    allPeopleCopy.remove(element)
                 }
             }
+            r = resultFriends
         }
+        result[name] = r
     }
     return result
 }
@@ -337,25 +345,14 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    var flag = false
-    var find = 0
-    var first = -1
-    for (i in 0 until list.size) {
-        if (!flag) {
-            val ele = number - list[i]
-            val list2 = list.subList(i + 1, list.size).toSet()
-            val listCopy = list2.toMutableSet()
-            listCopy.add(ele)
-            if (list2 == listCopy) {
-                flag = true
-                find = ele
-                first = i
-            }
-        } else {
-            if (list[i] == find) return Pair(first, i)
-        }
 
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    val mList = mutableMapOf<Int, Int>()
+    for (element in list) {
+        mList[element] = number - element
+    }
+    for ((first, second) in mList) {
+        if (mList.contains(second) && first != second) return Pair(list.indexOf(first), list.indexOf(second))
     }
     return Pair(-1, -1)
 }
