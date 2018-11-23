@@ -152,7 +152,7 @@ fun bestLongJump(jumps: String): Int {
         if (attempt != null) {
             max = kotlin.math.max(attempt, max)
         } else {
-            if (element != "%" && element != "-") {
+            if (element != "%" && element != "-" && element != "") {
                 return -1
             }
         }
@@ -177,7 +177,7 @@ fun bestHighJump(jumps: String): Int {
         val jump = mutableMapOf<Int, String>()
         var max = 0
         for (i in 0 until parts.size step 2) {
-            if (!(parts[i + 1].contains(Regex("""-|%|/+""")))) return -2 //не воспринимает плюс за символ
+            if (!(parts[i + 1].contains(Regex("""-|%|/+""")))) return -1 //не воспринимает плюс за символ
             jump[parts[i].toInt()] = parts[i + 1]!!
         }
         for ((height, attempt) in jump) {
@@ -193,10 +193,6 @@ fun bestHighJump(jumps: String): Int {
     }
 }
 
-fun main(args: Array<String>) {
-    val x1x2 = bestHighJump("220 + 224 %- 228 %+ 230 + 232 %%- 234 %")
-    println("$x1x2")
-}
 
 /**
  * Сложная
@@ -281,7 +277,7 @@ fun firstDuplicateIndex(str: String): Int {
         }
     }
     return -1
-}
+} //не проходит тест "0 ] 1 O - _ i V S P u R { W ! o m A A [ 6 c a". по тестам котоеда - 24, по факту - 18
 
 /**
  * Сложная
@@ -294,7 +290,33 @@ fun firstDuplicateIndex(str: String): Int {
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    try {
+        val list = description.split(";")
+        val map = mutableMapOf<String, Double>()
+        var max = 0.0
+        var answer = ""
+        for (element in list) {
+            var string = element.trim()
+            var list2 = string.split(" ")
+            map[list2[0]] = list2[1].toDouble()
+        }
+        for ((name, value) in map) {
+            if (value > max) {
+                answer = name
+                max = value
+            }
+        }
+        return answer
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    }
+}
+
+fun main(args: Array<String>) {
+    val x1x2 = mostExpensive("Хлеб 39.9; Молоко 62.5; Курица 184.0; Конфеты 89.9")
+    println("$x1x2")
+}
 
 /**
  * Сложная
