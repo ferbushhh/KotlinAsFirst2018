@@ -1,5 +1,8 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson8.task2
+
+import java.lang.Math.abs
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -21,7 +24,13 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = TODO()
+    fun notation(): String {
+        return if (column > 8 || column < 1 || row > 8 || row < 1) ""
+        else {
+            var columnA = (column + 'a'.toInt() - 1).toChar()
+            "$columnA$row"
+        }
+    }
 }
 
 /**
@@ -31,7 +40,17 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException
  */
-fun square(notation: String): Square = TODO()
+fun square(notation: String): Square {
+    try {
+        if (!Regex("[a-h][1-9]").matches(notation)) throw IllegalArgumentException("error")
+        val parts = notation.toCharArray()
+        var column = parts[0] - 'a' + 1
+        var row = parts[1].toInt() - '1'.toInt() + 1
+        return Square(column, row)
+    } catch (e: IllegalArgumentException) {
+        throw IllegalArgumentException("error")
+    }
+}
 
 /**
  * Простая
@@ -56,7 +75,17 @@ fun square(notation: String): Square = TODO()
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int = TODO()
+fun rookMoveNumber(start: Square, end: Square): Int {
+    try {
+        if (start.notation() == "" || end.notation() == "") throw IllegalArgumentException("error")
+        return if (start == end) 0
+        else if (start.column == end.column || start.row == end.row) 1
+        else 2
+    } catch (e: IllegalArgumentException) {
+        throw IllegalArgumentException("error")
+    }
+
+}
 
 /**
  * Средняя
@@ -72,7 +101,17 @@ fun rookMoveNumber(start: Square, end: Square): Int = TODO()
  *          rookTrajectory(Square(3, 5), Square(8, 5)) = listOf(Square(3, 5), Square(8, 5))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun rookTrajectory(start: Square, end: Square): List<Square> {
+    val result = rookMoveNumber(start, end)
+    return when (result) {
+        0 -> listOf(start)
+        1 -> listOf(start, end)
+        else -> {
+            val middle = Square(start.column, end.row)
+            listOf(start, middle, end)
+        }
+    }
+}
 
 /**
  * Простая
@@ -97,7 +136,23 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int {
+    try {
+        if (start.notation() == "" || end.notation() == "") throw IllegalArgumentException("error")
+        val parityFirst = (start.column + start.row) % 2
+        val paritySecond = (end.column + end.row) % 2
+        return when {
+            start == end -> 0
+            abs(start.column - end.column) == abs(start.row - end.row) -> 1
+            parityFirst == paritySecond -> 2
+            else -> -1
+        }
+
+    } catch (e: IllegalArgumentException) {
+        throw IllegalArgumentException("error")
+    }
+
+}
 
 /**
  * Сложная
@@ -117,7 +172,42 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun diagonals(point: Square): Set<Square> {
+    val diagonals = mutableSetOf<Square>()
+    val column = point.column
+    val row = point.row
+    for (i in 1..8) {
+        if (column + i <= 8 && row + i <= 8) diagonals.add(Square(column + i, row + i))
+        if (column + i <= 8 && row - i >= 1) diagonals.add(Square(column + i, row - i))
+        if (column - i >= 1 && row - i >= 1) diagonals.add(Square(column - i, row - i))
+        if (column - i >= 1 && row + i <= 8) diagonals.add(Square(column - i, row + i))
+    }
+    return diagonals
+}
+
+fun bishopTrajectory(start: Square, end: Square): List<Square> {
+    val numberOfMoves = bishopMoveNumber(start, end)
+    if (numberOfMoves == 0) return listOf(start)
+    else if (numberOfMoves == -1) return listOf()
+    else if (numberOfMoves == 1) return listOf(start, end)
+    else {
+        val result = mutableListOf(start)
+        val setOfSquareStart = diagonals(start)
+        val setOfSquareEnd = diagonals(end)
+        val t = setOfSquareEnd.intersect(setOfSquareStart)
+        for (element in t) {
+            result.add(element)
+            result.add(end)
+            break
+        }
+        return result
+    }
+}
+
+fun main(args: Array<String>) {
+    val x1x2 = bishopTrajectory(square("f1"), square("f7"))
+    println("$x1x2")
+}
 
 /**
  * Средняя
@@ -139,7 +229,18 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int = TODO() /*{ //не проходит при 3-ем тесте
+    try {
+        if (start.notation() == "" || end.notation() == "") throw IllegalArgumentException("error")
+        if (start == end) return 0
+        else {
+            if (bishopMoveNumber(start, end) == 1) return abs(start.row - end.row)
+            else return (abs(end.row - start.row) + abs(end.column - start.column))
+        }
+    } catch (e: IllegalArgumentException) {
+        throw IllegalArgumentException("error")
+    }
+}*/
 
 /**
  * Сложная

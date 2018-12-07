@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+
 /**
  * Пример
  *
@@ -70,43 +72,35 @@ fun timeSecondsToStr(seconds: Int): String {
  * входными данными.
  */
 fun dateStrToDigit(str: String): String {
-    val monthIn30 = setOf(4, 6, 9, 11)
-    val monthIn31 = setOf(1, 3, 5, 7, 8, 10, 12)
     val parts = str.split(" ")
-    val monthInYear = mutableMapOf<String, Int>(
-            "января" to 1,
-            "февраля" to 2,
-            "марта" to 3,
-            "апреля" to 4,
-            "мая" to 5,
-            "июня" to 6,
-            "июля" to 7,
-            "августа" to 8,
-            "сентября" to 9,
-            "октября" to 10,
-            "ноября" to 11,
-            "декабря" to 12
+    val monthInYear = listOf(
+            "января",
+            "февраля",
+            "марта",
+            "апреля",
+            "мая",
+            "июня",
+            "июля",
+            "августа",
+            "сентября",
+            "октября",
+            "ноября",
+            "декабря"
     )
     try {
         val day = parts[0].toInt()
-        val month = monthInYear[parts[1]]
+        if (parts[1] !in monthInYear) return ""
+        val month = monthInYear.indexOf(parts[1]) + 1
         val year = parts[2].toInt()
-        return if (month in monthIn30 && day > 30) ""
-        else if (month in monthIn31 && day > 31) ""
-        else if (month == 2 && day == 29 && ((year % 400 == 0)
-                        || (year % 100 != 0 && year % 4 == 0)))
-            String.format("%02d.%02d.%d", day, month, year)
-        else if (month == 2 && day > 28) ""
-        else if (!monthInYear.containsKey(parts[1])) ""
-        else if (parts.size != 3) ""
-        else String.format("%02d.%02d.%d", day, month, year)
-    } catch (e: NumberFormatException) {
-        null
-    } catch (e: IndexOutOfBoundsException) {
+        if (daysInMonth(month, year) >= day) return String.format("%02d.%02d.%d", day, month, year)
+        else if (parts.size != 3) return ""
+
+    } catch (e: Exception) {
         null
     }
     return ""
 }
+
 
 /**
  * Средняя
@@ -118,7 +112,35 @@ fun dateStrToDigit(str: String): String {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val parts = digital.split(".")
+    val monthInYear = listOf(
+            "января",
+            "февраля",
+            "марта",
+            "апреля",
+            "мая",
+            "июня",
+            "июля",
+            "августа",
+            "сентября",
+            "октября",
+            "ноября",
+            "декабря"
+    )
+    try {
+        val day = parts[0].toInt()
+        val month = parts[1].toInt()
+        if (month > 12 || month < 1) return ""
+        val year = parts[2].toInt()
+        if (parts.size != 3) return ""
+        else if (daysInMonth(month, year) >= day) return String.format("%d %s %d", day, monthInYear[month - 1], year)
+
+    } catch (e: Exception) {
+        null
+    }
+    return ""
+}
 
 /**
  * Средняя
@@ -132,7 +154,16 @@ fun dateDigitToStr(digital: String): String = TODO()
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    if (!Regex("[\\+\\(\\)\\d\\- ]+").matches(phone)) return ""
+    val result = mutableListOf<Char>()
+    for (char in phone) {
+        if (char in '0'..'9' || char == '+')
+            result.add(char)
+    }
+    return result.joinToString(separator = "")
+}
+
 
 /**
  * Средняя
@@ -145,8 +176,8 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    var jump = jumps.split(" ")
-    var max = 0
+    val jump = jumps.split(" ")
+    var max = -1
     for (element in jump) {
         val attempt = element.toIntOrNull()
         if (attempt != null) {
@@ -157,9 +188,9 @@ fun bestLongJump(jumps: String): Int {
             }
         }
     }
-    return if (max == 0) -1
-    else max
+    return max
 }
+
 
 /**
  * Сложная
@@ -173,22 +204,19 @@ fun bestLongJump(jumps: String): Int {
  */
 fun bestHighJump(jumps: String): Int {
     try {
+        if (!Regex("[%\\+\\d\\- ]+").matches(jumps)) return -1
         val parts = jumps.split(" ")
         val jump = mutableMapOf<Int, String>()
-        var max = 0
+        var max = -1
         for (i in 0 until parts.size step 2) {
-            if (!(parts[i + 1].contains(Regex("""-|%|/+""")))) return -1 //не воспринимает плюс за символ
             jump[parts[i].toInt()] = parts[i + 1]!!
         }
         for ((height, attempt) in jump) {
             if (attempt.contains("+"))
                 max = kotlin.math.max(max, height)
         }
-        return if (max == 0) -1
-        else max
-    } catch (e: NumberFormatException) {
-        return -1
-    } catch (e: IndexOutOfBoundsException) {
+        return max
+    } catch (e: Exception) {
         return -1
     }
 }
@@ -203,24 +231,22 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
+
 fun plusMinus(expression: String): Int {
-    val numberCh = listOf('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')
     try {
+        if (!Regex("[\\d +|\\- \\d]+").matches(expression)) throw IllegalArgumentException("error")
         val elements = expression.split(" ")
-        for (obj in elements[0]) {
-            if (obj !in numberCh) throw IllegalArgumentException("error")
-        }
         var result = elements[0].toInt()
-        if (elements.size == 1) return result
+        if (elements.size == 1) {
+            if (!Regex("[\\d]+").matches(elements[0])) throw IllegalArgumentException("error")
+            return result
+        }
         for (i in 1 until elements.size) {
             if (i % 2 == 0) {
-                for (obj in elements[i]) {
-                    if (obj !in numberCh) throw IllegalArgumentException("error")
-                }
+                if (!Regex("[\\d]+").matches(elements[i])) throw IllegalArgumentException("error")
                 when {
                     elements[i - 1] == "+" -> result += elements[i].toInt()
                     elements[i - 1] == "-" -> result -= elements[i].toInt()
-                    else -> throw IllegalArgumentException("error")
                 }
             }
             if (i % 2 != 0) {
@@ -232,6 +258,7 @@ fun plusMinus(expression: String): Int {
         throw IllegalArgumentException("error")
     }
 }
+
 
 
 /**
@@ -246,39 +273,20 @@ fun plusMinus(expression: String): Int {
 fun firstDuplicateIndex(str: String): Int {
     val str2 = str.toLowerCase()
     val parts = str2.split(" ")
-    var needEle = parts[0]
-    var flag = false
     var sum = 0
-    var numberNeedEle = 0
-    val list = parts.toMutableList()
-    for (i in 1 until parts.size) {
-        if (parts[i] == parts[i - 1]) {
-            needEle = parts[i - 1]
-            numberNeedEle = i - 1
-            flag = true
-            break
-        }
-    }
-    if (!flag) return -1
-    else {
-        for (i in 0 until parts.size) {
-            if (i != numberNeedEle && parts[i] == needEle && i != numberNeedEle + 1) {
-                sum += parts[i].length
-                list[i] = ""
-            }
-        }
-        for (element in list) {
-            val index = list.indexOf(element)
-            if (numberNeedEle == index) {
-                return sum
-            } else {
-                sum += element.length + 1
-            }
+    for (i in 0..parts.size - 2) {
+        if (parts[i] == parts[i + 1]) {
+            return sum
+        } else {
+            sum += parts[i].length + 1
         }
     }
     return -1
-} //не проходит тест "0 ] 1 O - _ i V S P u R { W ! o m A A [ 6 c a". по тестам котоеда - 24, по факту - 18
-
+}
+fun main(args: Array<String>) {
+    val x1x2 = firstDuplicateIndex("} 3 9 , . 8 E e Y V 1 < E L G ] , $ C } 3 9 , . 8 E e Y V 1 < E L G ] , $ C")
+    println("$x1x2")
+}
 /**
  * Сложная
  *
@@ -297,8 +305,8 @@ fun mostExpensive(description: String): String {
         var max = 0.0
         var answer = ""
         for (element in list) {
-            var string = element.trim()
-            var list2 = string.split(" ")
+            val string = element.trim()
+            val list2 = string.split(" ")
             map[list2[0]] = list2[1].toDouble()
         }
         for ((name, value) in map) {
@@ -313,10 +321,6 @@ fun mostExpensive(description: String): String {
     }
 }
 
-fun main(args: Array<String>) {
-    val x1x2 = mostExpensive("Хлеб 39.9; Молоко 62.5; Курица 184.0; Конфеты 89.9")
-    println("$x1x2")
-}
 
 /**
  * Сложная

@@ -2,6 +2,9 @@
 
 package lesson5.task1
 
+import java.util.Collections.max
+import kotlin.math.max
+
 
 /**
  * Пример
@@ -374,4 +377,51 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val field = Array(treasures.size + 2) { Array(capacity + 1) { 0 } }
+    val result = mutableSetOf<String>()
+    val name = mutableListOf<String>()
+    val value = mutableListOf<Int>()
+    val weight = mutableListOf<Int>()
+    val countInTr = treasures.size
+
+    for ((rich, pair) in treasures) {
+        name.add(rich)
+        weight.add(pair.first)
+        value.add(pair.second)
+    }
+
+    for (wt in 1..capacity) {
+        if (wt >= weight[0]) field[1][wt] = value[0]
+        else field[1][wt] = 0
+    }
+
+    for (num in 2..countInTr) {
+        val help = num - 1
+        for (wt in 1..capacity) {
+            if (weight[help] <= wt) field[num][wt] = max(field[help][wt], field[help][wt - weight[help]] + value[help])
+            else field[num][wt] = field[help][wt]
+        }
+    }
+
+    fun getSet(num: Int, wt: Int) {
+        if (num != 0 && wt != 0) {
+            if (field[num][wt] == field[num - 1][wt]) getSet(num - 1, wt)
+            else {
+                getSet(num - 1, wt - weight[num - 1])
+                result.add(name[num - 1])
+            }
+        }
+    }
+
+    getSet(countInTr, capacity)
+    return result
+}
+
+fun main(args: Array<String>) {
+    val x1x2 = bagPacking(mapOf("Q" to (2 to 1000), "W" to (4 to 2000), "E" to (5 to 5000), "R" to (12 to 10000), "T" to (9 to 8000)),
+            11)
+    println("$x1x2")
+}
+
+

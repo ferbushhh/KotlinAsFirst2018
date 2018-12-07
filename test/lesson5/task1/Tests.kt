@@ -327,6 +327,11 @@ class Tests {
                         450
                 )
         )
+        assertEquals(
+                setOf("Q", "T"),
+                bagPacking(mapOf("Q" to (2 to 1000), "W" to (4 to 2000), "E" to (5 to 5000), "R" to (12 to 10000), "T" to (9 to 8000)),
+                        11)
+        )
     }
 
     // TODO: map task tests

@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import java.awt.SystemColor.text
 import java.io.File
 
 /**
@@ -55,26 +56,29 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
-    for (line in File(inputName).readLines()) {
-        val lineNew = line.toLowerCase()
-        for (word in substrings) {
-            val wordNew = word.toLowerCase()
-            if (lineNew.contains(wordNew)) { //как посчитать СКОЛЬКО раз вошла подстрока в строку (считает только один раз в строке)
-                if (result[word] == null) result[word] = 0
-                var i = result[word]!!
-                i++
-                result[word] = i
-            }
-        }
+    for (element in substrings) {
+        result[element] = 0
     }
-    for (string in substrings) {
-        if (!result.containsKey(string)) {
-            result[string] = 0
+
+    val inputName2 = File(inputName).readText()
+    val str = inputName2.toUpperCase()
+
+    for (word in substrings) {
+        val newWord = word.toUpperCase()
+        var answer = Regex(newWord).find(str, 0)
+        while (answer != null) {
+            result[word] = result[word]!! + 1
+            var assistive: Int
+            if (word.length == 1) {
+                assistive = answer.range.start + 1
+            } else {
+                assistive = answer.range.start + word.length - 1
+            }
+            answer = Regex(newWord).find(str, assistive)
         }
     }
     return result
 }
-
 
 /**
  * Средняя
@@ -89,59 +93,24 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  * Исключения (жюри, брошюра, парашют) в рамках данного задания обрабатывать не нужно
  *
  */
+
 fun sibilants(inputName: String, outputName: String) {
     val map = mapOf(
-            "жы" to "жи",
-            "шы" to "ши",
-            "жя" to "жа",
-            "шя" to "ша",
-            "чя" to "ча",
-            "щя" to "ща",
-            "чю" to "чу",
-            "жю" to "жу",
-            "шю" to "шу",
-            "щю" to "щу",
-            "Жы" to "Жи",
-            "Шы" to "Ши",
-            "Жя" to "Жа",
-            "Шя" to "Ша",
-            "Чя" to "Ча",
-            "Щя" to "Ща",
-            "Чю" to "Чу",
-            "Жю" to "Жу",
-            "Шю" to "Шу",
-            "Щю" to "Щу",
-            "жЫ" to "жИ",
-            "шЫ" to "шИ",
-            "жЯ" to "жА",
-            "шЯ" to "шА",
-            "чЯ" to "чА",
-            "щЯ" to "щА",
-            "чЮ" to "чУ",
-            "жЮ" to "жУ",
-            "шЮ" to "шУ",
-            "щЮ" to "щУ",
-            "ЖЫ" to "ЖИ",
-            "ШЫ" to "ШИ",
-            "ЖЯ" to "ЖА",
-            "ШЯ" to "ША",
-            "ЧЯ" to "ЧА",
-            "ЩЯ" to "ЩА",
-            "ЧЮ" to "ЧУ",
-            "ЖЮ" to "ЖУ",
-            "ШЮ" to "ШУ",
-            "ЩЮ" to "ЩУ"
+            'ы' to "и",
+            'я' to "а",
+            'ю' to "у",
+            'Ы' to "И",
+            'Я' to "А",
+            'Ю' to "У"
     )
+    val letters = listOf<Char>('ж', 'ч', 'щ', 'ш')
     val writer = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
-        var result = line
-        map.forEach { first, second ->
-            if (line.contains(first)) {
-                result = result.replace(first, second)
-            }
-        }
-        writer.write(result)
-        writer.newLine()
+    var sim = 'ш'
+    for (char in File(inputName).readText()) {
+        if (map.containsKey(char) && sim in letters) {
+            writer.write(map[char])
+        } else writer.write(char.toString())
+        sim = char.toLowerCase()
     }
     writer.close()
 }
@@ -329,7 +298,17 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    /*val outputStream = File(outputName).bufferedWriter()
+    var flag1 = false
+    var flag2 = false
+    var flag3 = false
+    var flag12 = false
+    for (line in File(inputName).readLines()) {
+        var star3 = Regex("""\*\*\*""").find(line, 0)
+        if (star3 != null) {
+
+        }
+    } */
 }
 
 /**
