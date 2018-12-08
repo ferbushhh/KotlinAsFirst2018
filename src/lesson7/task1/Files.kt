@@ -80,6 +80,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     return result
 }
 
+
 /**
  * Средняя
  *
@@ -105,7 +106,7 @@ fun sibilants(inputName: String, outputName: String) {
     )
     val letters = listOf<Char>('ж', 'ч', 'щ', 'ш')
     val writer = File(outputName).bufferedWriter()
-    var sim = 'ш'
+    var sim = ' '
     for (char in File(inputName).readText()) {
         if (map.containsKey(char) && sim in letters) {
             writer.write(map[char])

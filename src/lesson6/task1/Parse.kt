@@ -284,7 +284,7 @@ fun firstDuplicateIndex(str: String): Int {
     return -1
 }
 fun main(args: Array<String>) {
-    val x1x2 = firstDuplicateIndex("} 3 9 , . 8 E e Y V 1 < E L G ] , $ C } 3 9 , . 8 E e Y V 1 < E L G ] , $ C")
+    val x1x2 = mostExpensive("<b0Ri7oZ6V1N``T.k0>D\"'u^7.m,lYYzI,tNVX&m}vOr^><ZUXSV?]|%6mm*yP7Vp%gr<SR{yCXI%w\\'8&uB/\\p+k:Z/K/Y^Crh%L,+fGh 0")
     println("$x1x2")
 }
 /**
@@ -302,7 +302,7 @@ fun mostExpensive(description: String): String {
     try {
         val list = description.split(";")
         val map = mutableMapOf<String, Double>()
-        var max = 0.0
+        var max = -1.0
         var answer = ""
         for (element in list) {
             val string = element.trim()

@@ -384,7 +384,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     val value = mutableListOf<Int>()
     val weight = mutableListOf<Int>()
     val countInTr = treasures.size
-
+    if (treasures.isEmpty()) return result
     for ((rich, pair) in treasures) {
         name.add(rich)
         weight.add(pair.first)
@@ -419,7 +419,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
 }
 
 fun main(args: Array<String>) {
-    val x1x2 = bagPacking(mapOf("Q" to (2 to 1000), "W" to (4 to 2000), "E" to (5 to 5000), "R" to (12 to 10000), "T" to (9 to 8000)),
+    val x1x2 = bagPacking(mapOf(),
             11)
     println("$x1x2")
 }
