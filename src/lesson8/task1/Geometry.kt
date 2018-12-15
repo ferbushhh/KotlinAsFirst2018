@@ -145,9 +145,9 @@ fun circleByDiameter(diameter: Segment): Circle {
  * или: y * cos(angle) = x * sin(angle) + b, где b = point.y * cos(angle) - point.x * sin(angle).
  * Угол наклона обязан находиться в диапазоне от 0 (включительно) до PI (исключительно).
  */
-class Line private constructor(val b: Double, val angle: Double) {
+class Line (val b: Double, val angle: Double) {
     init {
-        require(angle >= 0 && angle < PI) { "Incorrect line angle: $angle" }
+         require(angle >= 0 && angle < PI) { "Incorrect line angle: $angle" }
     }
 
     constructor(point: Point, angle: Double) : this(point.y * cos(angle) - point.x * sin(angle), angle)
@@ -158,17 +158,15 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO() /*{
-        var y = 0.0
-        var x = 0.0
-        var y1 = 1.0
-        while (y != y1) {
-            y1 = y
-            x = (y1 * cos(other.angle) - other.b) / sin(other.angle)
-            y = (x * sin(angle) + b) / cos (angle)
-        }
-        return Point(x, y)
-    } */
+    fun crossPoint(other: Line): Point {
+        var inY: Double
+        val inX = (b * cos(other.angle) - other.b * cos(angle)) / (sin(other.angle - angle))
+        if (angle != PI / 2)
+            inY = (inX * sin(angle) + b) / cos(angle)
+        else
+            inY = (inX * sin(other.angle) + other.b) / (cos(other.angle))
+        return Point(inX, inY)
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -189,6 +187,13 @@ class Line private constructor(val b: Double, val angle: Double) {
 fun lineBySegment(s: Segment): Line {
     val leg1 = abs(s.begin.x - s.end.x)
     val leg2 = abs(s.begin.y - s.end.y)
+    /*var ug: Double
+    if (leg1 != 0.0)
+        ug = atan(leg2 / leg1)
+    else
+        ug = PI / 2
+    ug %= (2 * PI)
+    val b = s.begin.y * cos(ug) - s.begin.x * sin(ug) */
     return if (leg1 == 0.0) Line(s.begin, PI / 2)
     else Line(s.begin, atan(leg2 / leg1))
 }
@@ -208,7 +213,11 @@ fun lineByPoints(a: Point, b: Point): Line {
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
-fun bisectorByPoints(a: Point, b: Point): Line = TODO()
+fun bisectorByPoints(a: Point, b: Point): Line {
+    val center = Point(abs(a.x - b.x) / 2 + min(a.x, b.x),abs(a.y - b.y) / 2 + min(a.y, b.y))
+    val beginLine = lineByPoints(a, b)
+    return Line(center, (beginLine.angle + PI / 2) % PI)
+}
 
 /**
  * Средняя
