@@ -288,7 +288,78 @@ fun kingMoveNumber(start: Square, end: Square): Int {
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    if (start == end) return listOf(start)
+    else {
+        if (bishopMoveNumber(start, end) == 1) {
+            var stepColumn = -1
+            var stepRow = -1
+            if (start.column < end.column) stepColumn = 1
+            if (start.row < end.row) stepRow = 1
+            val result = mutableListOf<Square>()
+            var square = start
+            while (square != end) {
+                result.add(square)
+                val column = square.column
+                val row = square.row
+                square = Square(column + stepColumn, row + stepRow)
+            }
+            result.add(end)
+            return result
+        } else if (rookMoveNumber(start, end) == 1) {
+            var stepColumn = 0
+            var stepRow = 0
+            if (start.row - end.row == 0) {
+                if (start.column > end.column) stepColumn = -1
+                else stepColumn = 1
+            } else {
+                if (start.row > end.row) stepRow = -1
+                else stepRow = 1
+            }
+            val result = mutableListOf<Square>()
+            var square = start
+            while (square != end) {
+                result.add(square)
+                val column = square.column
+                val row = square.row
+                square = Square(column + stepColumn, row + stepRow)
+            }
+            result.add(end)
+            return result
+        } else {
+            var stepColumn = 1
+            var stepRow = 1
+            if (start.column > end.column) stepColumn = -1
+            if (start.row > end.row) stepRow = -1
+            var square = start
+            val result = mutableListOf<Square>()
+            while (rookMoveNumber(square, end) == 2) {
+                result.add(square)
+                val column = square.column
+                val row = square.row
+                square = Square(column + stepColumn, row + stepRow)
+            }
+            stepColumn = 0
+            stepRow = 0
+            if (square.row - end.row == 0) {
+                if (square.column > end.column) stepColumn = -1
+                else stepColumn = 1
+            } else {
+                if (square.row > end.row) stepRow = -1
+                else stepRow = 1
+            }
+            while (square != end) {
+                result.add(square)
+                val column = square.column
+                val row = square.row
+                square = Square(column + stepColumn, row + stepRow)
+            }
+            result.add(end)
+            return result
+        }
+    }
+    return listOf()
+}
 
 /**
  * Сложная
