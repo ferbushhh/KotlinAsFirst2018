@@ -87,18 +87,16 @@ fun dateStrToDigit(str: String): String {
             "ноября",
             "декабря"
     )
-    try {
-        val day = parts[0].toInt()
-        if (parts[1] !in monthInYear) return ""
-        val month = monthInYear.indexOf(parts[1]) + 1
-        val year = parts[2].toInt()
-        if (daysInMonth(month, year) >= day) return String.format("%02d.%02d.%d", day, month, year)
-        else if (parts.size != 3) return ""
-
-    } catch (e: Exception) {
-        null
-    }
-    return ""
+    if (parts.size != 3) return ""
+    var month: Int
+    val day = parts[0].toIntOrNull()
+    if (parts[1] in monthInYear) {
+        month = monthInYear.indexOf(parts[1]) + 1
+    } else return ""
+    val year = parts[2].toIntOrNull()
+    return if (year != null && day != null && daysInMonth(month, year) >= day)
+        String.format("%02d.%02d.%d", day, month, year)
+    else ""
 }
 
 
@@ -128,18 +126,12 @@ fun dateDigitToStr(digital: String): String {
             "ноября",
             "декабря"
     )
-    try {
-        val day = parts[0].toInt()
-        val month = parts[1].toInt()
-        if (month > 12 || month < 1) return ""
-        val year = parts[2].toInt()
-        if (parts.size != 3) return ""
-        else if (daysInMonth(month, year) >= day) return String.format("%d %s %d", day, monthInYear[month - 1], year)
-
-    } catch (e: Exception) {
-        null
-    }
-    return ""
+    val day = parts[0].toIntOrNull()
+    val month = parts[1].toIntOrNull()
+    val year = parts[2].toIntOrNull()
+    return if (day != null && month != null && year != null &&
+            daysInMonth(month, year) >= day && month in 1..12 && parts.size == 3) String.format("%d %s %d", day, monthInYear[month - 1], year)
+    else ""
 }
 
 /**
@@ -155,7 +147,8 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    if (!Regex("[\\+\\(\\)\\d\\- ]+").matches(phone)) return ""
+    if (!Regex("[+()\\d\\- ]+").matches(phone)) return ""
+    if (Regex("\\d").find(phone, 0) == null) return ""
     val result = mutableListOf<Char>()
     for (char in phone) {
         if (char in '0'..'9' || char == '+')
@@ -234,23 +227,18 @@ fun bestHighJump(jumps: String): Int {
 
 fun plusMinus(expression: String): Int {
     try {
-        if (!Regex("[\\d +|\\- \\d]+").matches(expression)) throw IllegalArgumentException("error")
+        if (!Regex("""\d+(\s[+-]\s\d+)*""").matches(expression)) throw IllegalArgumentException("error")
         val elements = expression.split(" ")
         var result = elements[0].toInt()
         if (elements.size == 1) {
-            if (!Regex("[\\d]+").matches(elements[0])) throw IllegalArgumentException("error")
             return result
         }
         for (i in 1 until elements.size) {
             if (i % 2 == 0) {
-                if (!Regex("[\\d]+").matches(elements[i])) throw IllegalArgumentException("error")
                 when {
                     elements[i - 1] == "+" -> result += elements[i].toInt()
                     elements[i - 1] == "-" -> result -= elements[i].toInt()
                 }
-            }
-            if (i % 2 != 0) {
-                if (elements[i].length > 1) throw IllegalArgumentException("error")
             }
         }
         return result
@@ -258,7 +246,6 @@ fun plusMinus(expression: String): Int {
         throw IllegalArgumentException("error")
     }
 }
-
 
 
 /**
@@ -283,10 +270,12 @@ fun firstDuplicateIndex(str: String): Int {
     }
     return -1
 }
+
 fun main(args: Array<String>) {
     val x1x2 = mostExpensive("<b0Ri7oZ6V1N``T.k0>D\"'u^7.m,lYYzI,tNVX&m}vOr^><ZUXSV?]|%6mm*yP7Vp%gr<SR{yCXI%w\\'8&uB/\\p+k:Z/K/Y^Crh%L,+fGh 0")
     println("$x1x2")
 }
+
 /**
  * Сложная
  *

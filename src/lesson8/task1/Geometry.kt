@@ -77,7 +77,7 @@ data class Circle(val center: Point, val radius: Double) {
      * Расстояние между пересекающимися окружностями считать равным 0.0.
      */
     fun distance(other: Circle): Double {
-        return if (center.distance(other.center) > radius + other.radius) (center.distance(other.center) - (radius + other.radius))
+        return if (center.distance(other.center) > radius + other.radius) center.distance(other.center) - (radius + other.radius)
         else 0.0
     }
 
@@ -158,7 +158,17 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO()
+    fun crossPoint(other: Line): Point = TODO() /*{
+        var y = 0.0
+        var x = 0.0
+        var y1 = 1.0
+        while (y != y1) {
+            y1 = y
+            x = (y1 * cos(other.angle) - other.b) / sin(other.angle)
+            y = (x * sin(angle) + b) / cos (angle)
+        }
+        return Point(x, y)
+    } */
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -176,14 +186,22 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = TODO()
+fun lineBySegment(s: Segment): Line {
+    val leg1 = abs(s.begin.x - s.end.x)
+    val leg2 = abs(s.begin.y - s.end.y)
+    return if (leg1 == 0.0) Line(s.begin, PI / 2)
+    else Line(s.begin, atan(leg2 / leg1))
+}
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
+fun lineByPoints(a: Point, b: Point): Line {
+    val seg = Segment(a, b)
+    return lineBySegment(seg)
+}
 
 /**
  * Сложная

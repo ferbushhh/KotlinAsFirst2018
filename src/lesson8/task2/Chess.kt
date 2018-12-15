@@ -2,6 +2,7 @@
 
 package lesson8.task2
 
+import java.awt.Point
 import java.lang.Math.abs
 
 /**
@@ -24,13 +25,7 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String {
-        return if (column > 8 || column < 1 || row > 8 || row < 1) ""
-        else {
-            var columnA = (column + 'a'.toInt() - 1).toChar()
-            "$columnA$row"
-        }
-    }
+    fun notation(): String = if (!inside()) "" else 'a' + column - 1 + "$row"
 }
 
 /**
@@ -43,10 +38,7 @@ data class Square(val column: Int, val row: Int) {
 fun square(notation: String): Square {
     try {
         if (!Regex("[a-h][1-9]").matches(notation)) throw IllegalArgumentException("error")
-        val parts = notation.toCharArray()
-        var column = parts[0] - 'a' + 1
-        var row = parts[1].toInt() - '1'.toInt() + 1
-        return Square(column, row)
+        return Square(notation[0] - 'a' + 1, notation[1] - '0')
     } catch (e: IllegalArgumentException) {
         throw IllegalArgumentException("error")
     }
@@ -78,9 +70,11 @@ fun square(notation: String): Square {
 fun rookMoveNumber(start: Square, end: Square): Int {
     try {
         if (start.notation() == "" || end.notation() == "") throw IllegalArgumentException("error")
-        return if (start == end) 0
-        else if (start.column == end.column || start.row == end.row) 1
-        else 2
+        return when {
+            start == end -> 0
+            start.column == end.column || start.row == end.row -> 1
+            else -> 2
+        }
     } catch (e: IllegalArgumentException) {
         throw IllegalArgumentException("error")
     }
@@ -187,9 +181,26 @@ fun diagonals(point: Square): Set<Square> {
 
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
     val numberOfMoves = bishopMoveNumber(start, end)
-    if (numberOfMoves == 0) return listOf(start)
-    else if (numberOfMoves == -1) return listOf()
-    else if (numberOfMoves == 1) return listOf(start, end)
+    return when (numberOfMoves) {
+        0 -> listOf(start)
+        -1 -> listOf()
+        1 -> listOf(start, end)
+        else -> {
+            val result = mutableListOf(start)
+            val setOfSquareStart = diagonals(start)
+            val setOfSquareEnd = diagonals(end)
+            val t = setOfSquareEnd.intersect(setOfSquareStart)
+            for (element in t) {
+                result.add(element)
+                result.add(end)
+                break
+            }
+            result
+        }
+    }
+    /*return if (numberOfMoves == 0) listOf(start)
+    else if (numberOfMoves == -1) listOf()
+    else if (numberOfMoves == 1) listOf(start, end)
     else {
         val result = mutableListOf(start)
         val setOfSquareStart = diagonals(start)
@@ -200,8 +211,8 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
             result.add(end)
             break
         }
-        return result
-    }
+        result
+    } */
 }
 
 fun main(args: Array<String>) {
@@ -229,18 +240,39 @@ fun main(args: Array<String>) {
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO() /*{ //не проходит при 3-ем тесте
+fun kingMoveNumber(start: Square, end: Square): Int {
     try {
         if (start.notation() == "" || end.notation() == "") throw IllegalArgumentException("error")
-        if (start == end) return 0
+        else if (start == end) return 0
         else {
-            if (bishopMoveNumber(start, end) == 1) return abs(start.row - end.row)
-            else return (abs(end.row - start.row) + abs(end.column - start.column))
+            when {
+                bishopMoveNumber(start, end) == 1 -> return abs(start.row - end.row)
+                rookMoveNumber(start, end) == 1 -> return if (start.row == end.row) abs(start.column - end.column)
+                else abs(start.row - end.row)
+                else -> {
+                    var stepColumn = -1
+                    var stepRow = -1
+                    if (start.column < end.column) stepColumn = 1
+                    if (start.row < end.row) stepRow = 1
+                    var point = Square(start.column, start.row)
+                    var i = 0
+                    while (rookMoveNumber(point, end) == 2) {
+                        var y = point.row
+                        var x = point.column
+                        x += stepColumn
+                        y += stepRow
+                        point = Square(x, y)
+                        i++
+                    }
+                    return (i + abs(point.column - end.column) + abs(point.row - end.row))
+                }
+            }
         }
     } catch (e: IllegalArgumentException) {
         throw IllegalArgumentException("error")
     }
-}*/
+}
+
 
 /**
  * Сложная

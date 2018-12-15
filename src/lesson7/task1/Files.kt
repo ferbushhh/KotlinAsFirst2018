@@ -104,7 +104,7 @@ fun sibilants(inputName: String, outputName: String) {
             'Я' to "А",
             'Ю' to "У"
     )
-    val letters = listOf<Char>('ж', 'ч', 'щ', 'ш')
+    val letters = listOf('ж', 'ч', 'щ', 'ш')
     val writer = File(outputName).bufferedWriter()
     var sim = ' '
     for (char in File(inputName).readText()) {
