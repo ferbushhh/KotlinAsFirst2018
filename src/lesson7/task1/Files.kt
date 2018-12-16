@@ -59,7 +59,6 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     for (element in substrings) {
         result[element] = 0
     }
-
     val inputName2 = File(inputName).readText()
     val str = inputName2.toUpperCase()
 
@@ -68,11 +67,10 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         var answer = Regex(newWord).find(str, 0)
         while (answer != null) {
             result[word] = result[word]!! + 1
-            var assistive: Int
-            if (word.length == 1) {
-                assistive = answer.range.start + 1
+            var assistive: Int = if (word.length == 1 || word.length == 2) {
+                answer.range.start + 1
             } else {
-                assistive = answer.range.start + word.length - 1
+                answer.range.start + word.length - 1
             }
             answer = Regex(newWord).find(str, assistive)
         }
@@ -299,7 +297,8 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    /*val outputStream = File(outputName).bufferedWriter()
+    TODO() /*
+    val outputStream = File(outputName).bufferedWriter()
     var flag1 = false
     var flag2 = false
     var flag3 = false
@@ -307,7 +306,13 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     for (line in File(inputName).readLines()) {
         var star3 = Regex("""\*\*\*""").find(line, 0)
         if (star3 != null) {
-
+            flag12 = true
+            var i = 0
+            for (ch in line) {
+                if (i == star3!!.range.start)
+                    outputStream.write(ch.toString())
+                else break
+            }
         }
     } */
 }
