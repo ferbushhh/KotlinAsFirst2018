@@ -197,7 +197,7 @@ fun bestLongJump(jumps: String): Int {
  */
 fun bestHighJump(jumps: String): Int {
     try {
-        if (!Regex("[%\\+\\d\\- ]+").matches(jumps)) return -1
+        if (!Regex("[%+\\d\\- ]+").matches(jumps)) return -1
         val parts = jumps.split(" ")
         val jump = mutableMapOf<Int, String>()
         var max = -1

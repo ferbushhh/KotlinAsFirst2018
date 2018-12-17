@@ -297,24 +297,126 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO() /*
     val outputStream = File(outputName).bufferedWriter()
+    outputStream.write("<html><body><p>")
     var flag1 = false
     var flag2 = false
     var flag3 = false
-    var flag12 = false
+    var pastCh = ' '
+    var pastPastCh = ' '
+    var fl = 0
+    var print = 2
+    var howP = 4
     for (line in File(inputName).readLines()) {
-        var star3 = Regex("""\*\*\*""").find(line, 0)
-        if (star3 != null) {
-            flag12 = true
-            var i = 0
+        if (!line.isEmpty()) {
             for (ch in line) {
-                if (i == star3!!.range.start)
-                    outputStream.write(ch.toString())
-                else break
+                if (howP == 2) outputStream.write("</p><p>")
+                when {
+                    pastCh == '~' && pastPastCh == '~' -> {
+                        if (!flag3) {
+                            flag3 = true
+                            outputStream.write("<s>")
+                        } else {
+                            flag3 = false
+                            outputStream.write("</s>")
+                        }
+                        print++
+                    }
+                    pastPastCh != '*' && print == 0 -> {
+                        outputStream.write(pastPastCh.toString())
+                    }
+                    print != 0 -> print--
+                    pastCh != '*' -> {
+                        if (!flag1) {
+                            flag1 = true
+                            outputStream.write("<i>")
+                            fl = 1
+                        } else {
+                            flag1 = false
+                            outputStream.write("</i>")
+                        }
+                    }
+                    ch != '*' -> {
+                        if (!flag2) {
+                            flag2 = true
+                            outputStream.write("<b>")
+                            fl = 2
+                        } else {
+                            flag2 = false
+                            outputStream.write("</b>")
+                        }
+                        print++
+                    }
+                    else -> {
+                        when (fl) {
+                            1 -> {
+                                outputStream.write("</i>")
+                                flag1 = false
+                                fl = 0
+                            }
+                            2 -> {
+                                outputStream.write("</b>")
+                                flag2 = false
+                                fl = 0
+                                print++
+                            }
+                            else -> {
+                                outputStream.write("<b>")
+                                flag2 = true
+                                fl = 2
+                                print++
+                            }
+                        }
+                    }
+
+                }
+                pastPastCh = pastCh
+                pastCh = ch
+                howP++
+            }
+        } else {
+            //outputStream.write("</p><p>")
+            howP = 0
+        }
+    }
+    when {
+        pastCh == '~' && pastPastCh == '~' -> {
+            if (!flag3) {
+                outputStream.write("<s>")
+            } else {
+                outputStream.write("</s>")
             }
         }
-    } */
+        pastPastCh != '*' -> {
+            if (pastCh != '*') {
+                if (print == 0)
+                    outputStream.write(pastPastCh.toString())
+                outputStream.write(pastCh.toString())
+            } else {
+                if (!flag1) {
+                    outputStream.write("<i>")
+                } else {
+                    outputStream.write("</i>")
+                }
+            }
+        }
+        pastCh != '*' -> {
+            if (!flag1) {
+                outputStream.write("<i>")
+            } else {
+                outputStream.write("</i>")
+            }
+        }
+        else -> {
+            if (!flag2) {
+                outputStream.write("<b>")
+            } else {
+                outputStream.write("</b>")
+            }
+        }
+    }
+    outputStream.write("</p></body></html>")
+    outputStream.close()
 }
 
 /**
