@@ -58,10 +58,57 @@ Basic, Ruby, Swift.
     @Test
     @Tag("Normal")
     fun countSubstrings() {
-        assertEquals(mapOf("РАЗНЫЕ" to 2, "ные" to 2, "Неряшливость" to 1, "е" to 49, "эволюция" to 0),
+        /*assertEquals(mapOf("РАЗНЫЕ" to 2, "ные" to 2, "Неряшливость" to 1, "е" to 49, "эволюция" to 0),
                 countSubstrings("input/substrings_in1.txt", listOf("РАЗНЫЕ", "ные", "Неряшливость", "е", "эволюция")))
         assertEquals(mapOf("Карминовый" to 2, "Некрасивый" to 2, "белоглазый" to 1),
-                countSubstrings("input/substrings_in1.txt", listOf("Карминовый", "Некрасивый", "белоглазый")))
+                countSubstrings("input/substrings_in1.txt", listOf("Карминовый", "Некрасивый", "белоглазый")))*/
+        assertEquals(mapOf("аб" to 40,
+                "бвмбвЖа" to 6,
+                "вбба" to 5,
+                "бО" to 8,
+                "иЪ" to 4,
+                "вФ" to 3,
+                "вОа" to 4,
+                "ббаб" to 5,
+                "аб" to 40,
+                "аЫгабОб" to 3,
+                "фОрбвабб" to 4,
+                "бвЪйбббвГ" to 4,
+                "ау" to 2,
+                "абсЪа" to 4,
+                "вб" to 20,
+                "авбПв" to 4,
+                "ёЁЯМВвбП" to 5,
+                "фвва" to 3,
+                "був" to 6,
+                "ЗэЧбабшаб" to 4,
+                "бьвыДарбь" to 9,
+                "ббаыааб" to 6,
+                "вбб" to 7
+                ),
+                countSubstrings("input/substrings_in1.txt", listOf("аб", "бвмбвЖа",
+                        "вбба",
+                        "бО",
+                        "иЪ",
+                        "вФ",
+                        "вОа",
+                        "ббаб",
+                        "аб",
+                        "аЫгабОб",
+                        "фОрбвабб",
+                        "бвЪйбббвГ",
+                        "ау",
+                        "абсЪа",
+                        "вб",
+                        "авбПв",
+                        "ёЁЯМВвбП",
+                        "фвва",
+                        "був",
+                        "ЗэЧбабшаб",
+                        "бьвыДарбь",
+                        "аб",
+                        "ббаыааб",
+                        "вбб")))
     }
 
     @Test

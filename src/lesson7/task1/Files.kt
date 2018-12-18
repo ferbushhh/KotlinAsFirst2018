@@ -56,9 +56,9 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
-    for (element in substrings) {
+    for (element in substrings)
         result[element] = 0
-    }
+
     val inputName2 = File(inputName).readText()
     val str = inputName2.toUpperCase()
 
@@ -67,10 +67,11 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         var answer = Regex(newWord).find(str, 0)
         while (answer != null) {
             result[word] = result[word]!! + 1
-            var assistive: Int = if (word.length == 1 || word.length == 2) {
-                answer.range.start + 1
+            var assistive: Int
+            if (word.length == 1 || word.length == 2) {
+                assistive = answer.range.start + 1
             } else {
-                answer.range.start + word.length - 1
+                assistive = answer.range.start + word.length - 1
             }
             answer = Regex(newWord).find(str, assistive)
         }
@@ -222,7 +223,21 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val dic = mutableMapOf<Char, String>()
+    for ((key, value) in dictionary) {
+        dic[key.toLowerCase()] = value.toLowerCase()
+    }
+    for (ch in File(inputName).readText()) {
+        if (ch.toLowerCase() in dic) {
+            if (ch.toLowerCase() == ch)
+                writer.write(dic[ch])
+            else {
+                writer.write(dic[ch.toLowerCase()]!!.capitalize())
+            }
+        } else writer.write(ch.toString())
+    }
+    writer.close()
 }
 
 /**
@@ -374,10 +389,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 pastCh = ch
                 howP++
             }
-        } else {
-            //outputStream.write("</p><p>")
-            howP = 0
-        }
+        } else howP = 0
+
     }
     when {
         pastCh == '~' && pastPastCh == '~' -> {

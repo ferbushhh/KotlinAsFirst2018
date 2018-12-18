@@ -88,7 +88,7 @@ fun dateStrToDigit(str: String): String {
             "декабря"
     )
     if (parts.size != 3) return ""
-    var month: Int
+    val month: Int
     val day = parts[0].toIntOrNull()
     if (parts[1] in monthInYear) {
         month = monthInYear.indexOf(parts[1]) + 1
