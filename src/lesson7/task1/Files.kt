@@ -311,7 +311,7 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
-fun markdownToHtmlSimple(inputName: String, outputName: String) {
+/*fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     outputStream.write("<html><body><p>")
     var flag1 = false
@@ -390,7 +390,6 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 howP++
             }
         } else howP = 0
-
     }
     when {
         pastCh == '~' && pastPastCh == '~' -> {
@@ -430,7 +429,152 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     }
     outputStream.write("</p></body></html>")
     outputStream.close()
+}*/
+
+/*fun markdownToHtmlSimple(inputName: String, outputName: String) {
+    val outputStream = File(outputName).bufferedWriter()
+    outputStream.write("<html><body><p>")
+    var flag1 = false
+    var flag2 = false
+    var flagS = false
+    var depth = 0
+    var string1 = StringBuilder()
+    var string2 = StringBuilder()
+    var string3 = StringBuilder()
+    var masFlag = mutableListOf<Char>()
+    var pastCh = ' '
+    var pastPastCh = ' '
+    var fl = 0
+    var print = 2
+    var howP = 4
+    for (line in File(inputName).readLines()) {
+        if (!line.isEmpty()) {
+            for (ch in line) {
+                if (howP == 2) outputStream.write("</p><p>")
+                when {
+                    pastCh == '~' && pastPastCh == '~' -> {
+                        if (!flagS) {
+                            flagS = true
+                            depth++
+                            masFlag[depth] = 's'
+
+                        } else {
+                            flagS = false
+                            val index = masFlag.indexOf('s')
+                            if (index == depth) {
+                                when (index) {
+                                    1 -> {
+                                        outputStream.write("<s>")
+                                        outputStream.write(string1.toString())
+                                        outputStream.write("</s>")
+                                        string1.removeRange(0, string1.length)
+                                    }
+                                    2 -> {
+                                        string1.append("<s>")
+                                        string1.append(string2)
+                                        string1.append("</s>")
+                                        string2.removeRange(0, string2.length)
+                                    }
+                                    3 -> {
+                                        string2.append("<s>")
+                                        string2.append(string3)
+                                        string2.append("</s>")
+                                        string3.removeRange(0, string3.length)
+                                    }
+                                }
+                                depth--
+                            } else {
+                                if (index == 1) {
+                                    if (depth == 2) {
+                                        var t = masFlag[2]
+                                        string1.append("<")
+                                        string1.append(t.toString())
+                                        string1.append(">")
+                                        string1.append(string2)
+                                        string1.append("</")
+                                        string1.append(t.toString())
+                                        string1.append(">")
+                                        string2.removeRange(0, string2.length)
+                                        outputStream.write("<s>")
+                                        outputStream.write(string1.toString())
+                                        outputStream.write("</s>")
+                                        string1.removeRange(0, string1.length)
+                                        depth--
+                                        masFlag[depth] = t
+                                    } else {
+                                        val t3 = masFlag[3]
+                                        val t2 = masFlag[2]
+                                    }
+                                }
+                            }
+                        }
+                        print++
+                    }
+                    pastPastCh != '*' && print == 0 -> {
+                        if (depth == 0) outputStream.write(pastPastCh.toString())
+                        else {
+                            if (masFlag[depth] == 's') stringS.append(ch)
+                            if (masFlag[depth] == 'b') stringB.append(ch)
+                            if (masFlag[depth] == 'i') stringI.append(ch)
+                        }
+                    }
+                    print != 0 -> print--
+                    pastCh != '*' -> {
+                        if (!flag1) {
+                            flag1 = true
+                            outputStream.write("<i>")
+                            fl = 1
+                        } else {
+                            flag1 = false
+                            outputStream.write("</i>")
+                        }
+                    }
+                    ch != '*' -> {
+                        if (!flag2) {
+                            flag2 = true
+                            outputStream.write("<b>")
+                            fl = 2
+                        } else {
+                            flag2 = false
+                            outputStream.write("</b>")
+                        }
+                        print++
+                    }
+                    else -> {
+                        when (fl) {
+                            1 -> {
+                                outputStream.write("</i>")
+                                flag1 = false
+                                fl = 0
+                            }
+                            2 -> {
+                                outputStream.write("</b>")
+                                flag2 = false
+                                fl = 0
+                                print++
+                            }
+                            else -> {
+                                outputStream.write("<b>")
+                                flag2 = true
+                                fl = 2
+                                print++
+                            }
+                        }
+                    }
+
+                }
+                pastPastCh = pastCh
+                pastCh = ch
+                howP++
+            }
+        } else howP = 0
+    }
 }
+
+fun main(args: Array<String>) {
+    val x1x2 = markdownToHtmlSimple("input/markdown_simple.md", "temp.html")
+    println("Root product: $x1x2")
+}*/
 
 /**
  * Сложная

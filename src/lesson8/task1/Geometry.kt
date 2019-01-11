@@ -184,18 +184,14 @@ class Line (val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
+
 fun lineBySegment(s: Segment): Line {
-    val leg1 = abs(s.begin.x - s.end.x)
-    val leg2 = abs(s.begin.y - s.end.y)
-    /*var ug: Double
-    if (leg1 != 0.0)
-        ug = atan(leg2 / leg1)
-    else
-        ug = PI / 2
-    ug %= (2 * PI)
-    val b = s.begin.y * cos(ug) - s.begin.x * sin(ug) */
-    return if (leg1 == 0.0) Line(s.begin, PI / 2)
-    else Line(s.begin, atan(leg2 / leg1))
+    var corner = atan2((s.begin.y - s.end.y), (s.begin.x - s.end.x))
+    when {
+        corner < 0.0 -> corner += PI
+        corner >= PI -> corner -= PI
+    }
+    return Line(s.begin, corner)
 }
 
 /**
@@ -239,7 +235,6 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val bisecAB = bisectorByPoints(a, b)
     val bisecBC = bisectorByPoints(c, b)
-    //val bisecCA = bisectorByPoints(a, c)
     val center = bisecAB.crossPoint(bisecBC)
     return Circle(center, a.distance(center))
 }
